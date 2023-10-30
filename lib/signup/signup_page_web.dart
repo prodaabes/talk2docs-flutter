@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+class SignupPageWeb extends StatefulWidget {
+  const SignupPageWeb({super.key});
 
   @override
-  _SignupPageState createState() => _SignupPageState();
+  _SignupPageWebState createState() => _SignupPageWebState();
 }
 
-class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
+class _SignupPageWebState extends State<SignupPageWeb> with TickerProviderStateMixin {
   late AnimationController _controller1;
   late AnimationController _controller2;
   late Animation<Offset> _slideAnimation1;
@@ -27,12 +27,12 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     );
 
     _slideAnimation1 = Tween<Offset>(
-      begin: Offset(-2.0, 0.0),
+      begin: const Offset(-2.0, 0.0),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller1, curve: Curves.easeOut));
 
     _slideAnimation2 = Tween<Offset>(
-      begin: Offset(-2.0, 0.0),
+      begin: const Offset(-2.0, 0.0),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller2, curve: Curves.easeOut));
 
@@ -47,6 +47,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     _controller2.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,51 +64,53 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
       ),
     );
   }
+
   Widget signupBodyWidget(BuildContext context) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      SizedBox( // <-- Removed 'const' here
-        width: 450,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SlideTransition(
-              position: _slideAnimation1,
-              child: Text(
-                'Sign Up for',
-                style: TextStyle(
-                  color: Color(0xFF3BBA9C),
-                  fontSize: 75,
-                  fontWeight: FontWeight.bold,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(
+          // <-- Removed 'const' here
+          width: 450,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SlideTransition(
+                position: _slideAnimation1,
+                child: const Text(
+                  'Sign Up for',
+                  style: TextStyle(
+                    color: Color(0xFF3BBA9C),
+                    fontSize: 75,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            SlideTransition(
-              position: _slideAnimation2,
-              child: Text(
-                'Talk2Docs',
-                style: TextStyle(
-                  color: Color(0xFF3BBA9C),
-                  fontSize: 75,
-                  fontWeight: FontWeight.bold,
+              SlideTransition(
+                position: _slideAnimation2,
+                child: const Text(
+                  'Talk2Docs',
+                  style: TextStyle(
+                    color: Color(0xFF3BBA9C),
+                    fontSize: 75,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.height / 6),
-        child: SizedBox(
-          width: 320,
-          child: _formRegister(),
+        Padding(
+          padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height / 6),
+          child: SizedBox(
+            width: 320,
+            child: _formRegister(),
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 }
 
 Widget signupMenuWidget({required VoidCallback onPressSignIn}) {
@@ -146,7 +149,6 @@ Widget signupMenuWidget({required VoidCallback onPressSignIn}) {
     ),
   );
 }
-
 
 Widget _formRegister() {
   return Column(
@@ -201,10 +203,6 @@ Widget _formRegister() {
           ],
         ),
         child: ElevatedButton(
-          child: Container(
-              width: double.infinity,
-              height: 50,
-              child: Center(child: Text("Sign Up"))),
           onPressed: () => print("Sign Up pressed"),
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
@@ -213,6 +211,10 @@ Widget _formRegister() {
               borderRadius: BorderRadius.circular(15),
             ),
           ),
+          child: const SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: Center(child: Text("Sign Up"))),
         ),
       ),
       const SizedBox(height: 40),
@@ -250,6 +252,7 @@ Widget _formRegister() {
     ],
   );
 }
+
 Widget _loginWithButton({required String image, bool isActive = false}) {
   return Container(
     width: 90,
