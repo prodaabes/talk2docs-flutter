@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:custom_signin_buttons/custom_signin_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:talk2docs/login/login_page.dart';
+import 'package:crypto/crypto.dart';
 
 class LoginPageMobile extends LoginPage {
   const LoginPageMobile({super.key});
@@ -11,6 +14,10 @@ class LoginPageMobile extends LoginPage {
 
 class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
   var _isTitleVisible = false;
+
+  // these controllers used to control the text fields (like get the text)
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -83,6 +90,7 @@ class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
                         border: Border(
                             bottom: BorderSide(color: Color(0xFF3BBA9C)))),
                     child: TextField(
+                      controller: emailController,
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Email Address",
@@ -92,6 +100,7 @@ class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
                   Container(
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
+                      controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                           border: InputBorder.none,
@@ -106,7 +115,7 @@ class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
                         onPressed: () {},
                         style: ButtonStyle(
                             overlayColor: MaterialStateColor.resolveWith(
-                                (states) => const Color(0x55616161))),
+                                    (states) => const Color(0x55616161))),
                         child: const Text(
                           'Forgot Password',
                           style: TextStyle(
@@ -117,7 +126,18 @@ class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
                     ],
                   ),
                   FilledButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // get email and password from fields
+                      final email = emailController.text;
+                      final password = passwordController.text;
+
+                      // hash the password using sha256
+                      final passwordInBytes = utf8.encode(password);
+                      final sha256password = sha256.convert(passwordInBytes);
+
+                      // try to login
+                      login(context, email, sha256password.toString());
+                    },
                     style: FilledButton.styleFrom(
                         minimumSize: const Size.fromHeight(40),
                         backgroundColor: const Color(0xFF000026)),
