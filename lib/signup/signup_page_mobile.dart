@@ -12,6 +12,11 @@ class SignupPageMobile extends SignupPage {
 class _SignupPageMobile extends SignupPageState<SignupPageMobile> {
   var _isTitleVisible = false;
 
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -54,8 +59,6 @@ class _SignupPageMobile extends SignupPageState<SignupPageMobile> {
                       height: 100,
                       child: Center(
                         child: AnimatedOpacity(
-                          // If the widget is visible, animate to 0.0 (invisible).
-                          // If the widget is hidden, animate to 1.0 (fully visible).
                           opacity: _isTitleVisible ? 1.0 : 0.0,
                           duration: const Duration(milliseconds: 1000),
                           child: const Text(
@@ -80,9 +83,10 @@ class _SignupPageMobile extends SignupPageState<SignupPageMobile> {
                   Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: const BoxDecoration(
-                        border:
-                        Border(bottom: BorderSide(color: Color(0xFF3BBA9C)))),
+                        border: Border(
+                            bottom: BorderSide(color: Color(0xFF3BBA9C)))),
                     child: TextField(
+                      controller: firstNameController,
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "First Name",
@@ -92,9 +96,10 @@ class _SignupPageMobile extends SignupPageState<SignupPageMobile> {
                   Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: const BoxDecoration(
-                        border:
-                        Border(bottom: BorderSide(color: Color(0xFF3BBA9C)))),
+                        border: Border(
+                            bottom: BorderSide(color: Color(0xFF3BBA9C)))),
                     child: TextField(
+                      controller: lastNameController,
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Last Name",
@@ -104,9 +109,10 @@ class _SignupPageMobile extends SignupPageState<SignupPageMobile> {
                   Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: const BoxDecoration(
-                        border:
-                            Border(bottom: BorderSide(color: Color(0xFF3BBA9C)))),
+                        border: Border(
+                            bottom: BorderSide(color: Color(0xFF3BBA9C)))),
                     child: TextField(
+                      controller: emailController,
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Email Address",
@@ -115,7 +121,11 @@ class _SignupPageMobile extends SignupPageState<SignupPageMobile> {
                   ),
                   Container(
                     padding: const EdgeInsets.all(8.0),
+                    decoration: const BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(color: Color(0xFF3BBA9C)))),
                     child: TextField(
+                      controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                           border: InputBorder.none,
@@ -123,13 +133,24 @@ class _SignupPageMobile extends SignupPageState<SignupPageMobile> {
                           hintStyle: TextStyle(color: Colors.grey[700])),
                     ),
                   ),
+                  const SizedBox(height: 10),
                   FilledButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Get the user input from controllers
+                      String firstName = firstNameController.text;
+                      String lastName = lastNameController.text;
+                      String email = emailController.text;
+                      String password = passwordController.text;
+
+                      // Call the register function
+                      register(context, firstName, lastName, email, password);
+                    },
                     style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(40),
-                        backgroundColor: const Color(0xFF000026)),
+                      minimumSize: const Size.fromHeight(40),
+                      backgroundColor: const Color(0xFF000026),
+                    ),
                     child: const Text('Sign Up'),
-                  )
+                  ),
                 ],
               ),
             ),

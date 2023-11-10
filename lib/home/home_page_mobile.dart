@@ -9,17 +9,49 @@ class HomePageMobile extends HomePage {
 }
 
 class _HomePageMobile extends HomePageState<HomePageMobile> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xDDFFFFFF),
-      body: Container()
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF000026),
+        title: const Text(
+          'Talk2Docs',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: () {
+              logout(); 
+            },
+          ),
+        ],
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(16),
+        child: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Welcome to Your App!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF3BBA9C),
+                ),
+              ),
+              SizedBox(height: 20),
+      
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
