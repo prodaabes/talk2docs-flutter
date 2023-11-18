@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:talk2docs/signup/signup_page.dart';
 import 'package:talk2docs/login/login_page.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 
 class SignupPageWeb extends SignupPage {
   const SignupPageWeb({Key? key}) : super(key: key);
@@ -20,6 +22,15 @@ class _SignupPageWebState extends SignupPageState<SignupPageWeb>
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+   
+  String _hashPassword(String password) {
+
+    var bytes = utf8.encode(password); 
+    var digest = sha256.convert(bytes);
+
+
+    return digest.toString();
+  }
 
   @override
   void initState() {
@@ -257,7 +268,7 @@ class _SignupPageWebState extends SignupPageState<SignupPageWeb>
               final firstName = firstNameController.text;
               final lastName = lastNameController.text;
               final email = emailController.text;
-              final password = passwordController.text;
+              final password = _hashPassword(passwordController.text);
 
               // Call the register method
               register(context, firstName, lastName, email, password);

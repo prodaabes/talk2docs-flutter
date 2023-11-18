@@ -37,7 +37,7 @@ class HomePageState<T extends HomePage> extends State<T> {
   @override
   Widget build(BuildContext context) {
     if (kIsWeb) {
-      return const HomePageWeb();
+      return  HomePageWeb();
     } else {
       return const HomePageMobile();
     }

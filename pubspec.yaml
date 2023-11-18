@@ -39,6 +39,7 @@ dependencies:
   custom_signin_buttons: ^1.0.2
   http: ^1.1.0
   shared_preferences: ^2.2.2
+  crypto: ^3.0.1
 
 dev_dependencies:
   flutter_test:
