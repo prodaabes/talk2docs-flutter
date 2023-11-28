@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:custom_signin_buttons/custom_signin_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:talk2docs/login/login_page.dart';
@@ -99,6 +98,9 @@ class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
                   ),
                   Container(
                     padding: const EdgeInsets.all(8.0),
+                    decoration: const BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(color: Color(0xFF3BBA9C)))),
                     child: TextField(
                       controller: passwordController,
                       obscureText: true,
@@ -111,20 +113,27 @@ class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
                   Row(
                     children: [
                       const Spacer(),
-                      TextButton(
-                        onPressed: () {},
-                        style: ButtonStyle(
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            right: 20.0), // Add right padding for spacing
+                        child: TextButton(
+                          onPressed: () {},
+                          style: ButtonStyle(
                             overlayColor: MaterialStateColor.resolveWith(
-                                    (states) => const Color(0x55616161))),
-                        child: const Text(
-                          'Forgot Password',
-                          style: TextStyle(
-                            color: Color(0xFF616161),
+                              (states) => const Color(0x55616161),
+                            ),
+                          ),
+                          child: const Text(
+                            'Forgot Password',
+                            style: TextStyle(
+                              color: Color(0xFF616161),
+                            ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
+                  const SizedBox(height:10),
                   FilledButton(
                     onPressed: () {
                       // get email and password from fields
@@ -139,10 +148,11 @@ class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
                       login(context, email, sha256password.toString());
                     },
                     style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(40),
-                        backgroundColor: const Color(0xFF000026)),
+                      minimumSize: const Size.fromHeight(40),
+                      backgroundColor: const Color(0xFF000026),
+                    ),
                     child: const Text('Sign In'),
-                  )
+                  ),
                 ],
               ),
             ),

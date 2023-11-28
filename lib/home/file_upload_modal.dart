@@ -1,0 +1,101 @@
+import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+
+class FileUploadModal extends StatefulWidget {
+  @override
+  _FileUploadModalState createState() => _FileUploadModalState();
+}
+
+class _FileUploadModalState extends State<FileUploadModal> {
+  List<PlatformFile> selectedFiles = [];
+
+  Future<void> _handleFilePick() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'gif', 'pdf', 'doc'], // Include image formats
+    );
+
+    if (result != null) {
+      setState(() {
+        selectedFiles.add(result.files.single);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        constraints: BoxConstraints(
+          maxWidth: 800, 
+          maxHeight: 700, 
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Upload Files',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                _handleFilePick();
+              },
+              child: Text('Upload Files'),
+            ),
+            const SizedBox(height: 16),
+            DataTable(
+              columns: const [
+                DataColumn(label: Text('File Name')),
+                DataColumn(label: Text('Extension')),
+                DataColumn(label: Text('Action')),
+              ],
+              rows: selectedFiles.map((file) {
+                return DataRow(cells: [
+                  DataCell(Text(file.name)),
+                  DataCell(Text(file.extension ?? '')),
+                  DataCell(IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () {
+                      setState(() {
+                        selectedFiles.remove(file);
+                      });
+                    },
+                  )),
+                ]);
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Close'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Function to open the file upload modal
+void openFileUploadModal(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Align(
+        alignment: Alignment.center,
+        child: FileUploadModal(),
+      );
+    },
+  );
+}

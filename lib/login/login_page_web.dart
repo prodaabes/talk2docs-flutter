@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:talk2docs/login/login_page.dart';
 import '../signup/signup_page_web.dart';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 class LoginPageWeb extends LoginPage {
   const LoginPageWeb({super.key});
@@ -17,6 +19,13 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
   late Animation<Offset> _slideAnimation1;
   late Animation<Offset> _slideAnimation2;
   late Animation<Offset> _slideAnimation3;
+
+  // Controllers used to control the text fields (get the text)
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // Track password visibility
+  bool _isPasswordVisible = false;
 
   @override
   void initState() {
@@ -63,12 +72,19 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
       backgroundColor: const Color(0xFF000026),
       body: ListView(
         padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width / 8),
+          horizontal: MediaQuery.of(context).size.width / 8,
+        ),
         children: [
-          loginMenuWidget(onPressRegister: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => const SignupPageWeb()));
-          }),
+          loginMenuWidget(
+            onPressRegister: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SignupPageWeb(),
+                ),
+              );
+            },
+          ),
           loginBodyWidget(context),
         ],
       ),
@@ -126,7 +142,8 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
         ),
         Padding(
           padding: EdgeInsets.symmetric(
-              vertical: MediaQuery.of(context).size.height / 6),
+            vertical: MediaQuery.of(context).size.height / 6,
+          ),
           child: SizedBox(
             width: 320,
             child: _formLogin(),
@@ -180,13 +197,6 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
       decoration: BoxDecoration(
         color: Colors.white70,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey[300]!,
-            spreadRadius: 1,
-            blurRadius: 5,
-          ),
-        ],
       ),
       child: const Text(
         'Register',
@@ -202,8 +212,9 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
     return Column(
       children: [
         TextField(
+          controller: emailController,
           decoration: InputDecoration(
-            hintText: 'Enter email or Phone number',
+            hintText: 'Email',
             filled: true,
             fillColor: Colors.blueGrey[50],
             labelStyle: const TextStyle(fontSize: 12),
@@ -220,12 +231,23 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
         ),
         const SizedBox(height: 30),
         TextField(
+          controller: passwordController,
+          obscureText: !_isPasswordVisible, 
           decoration: InputDecoration(
             hintText: 'Password',
             counterText: 'Forgot password?',
-            suffixIcon: const Icon(
-              Icons.visibility_off_outlined,
-              color: Colors.grey,
+            suffixIcon: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+              child: Icon(
+                _isPasswordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off_outlined,
+                color: Colors.grey,
+              ),
             ),
             filled: true,
             fillColor: Colors.blueGrey[50],
@@ -246,27 +268,32 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.deepPurple[100]!,
-                spreadRadius: 4,
-                blurRadius: 8,
-              ),
-            ],
           ),
           child: ElevatedButton(
-            onPressed: () => print("Sign In pressed"),
+            onPressed: () {
+              // Get email and password from fields
+              final email = emailController.text;
+              final password = passwordController.text;
+
+              // Hash the password using SHA-256
+              final passwordInBytes = utf8.encode(password);
+              final sha256password = sha256.convert(passwordInBytes).toString();
+
+              // Try to login
+              login(context, email, sha256password);
+            },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
-              backgroundColor: const Color(0xFF3D606E),
+              backgroundColor: const Color.fromARGB(255, 42, 143, 120),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
             ),
             child: const SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: Center(child: Text("Sign In"))),
+              width: double.infinity,
+              height: 50,
+              child: Center(child: Text("Sign In")),
+            ),
           ),
         ),
         const SizedBox(height: 40),
@@ -278,13 +305,14 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
             ),
           ),
           Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                "Or continue with",
-                style: TextStyle(
-                  color: Color(0xFF3D606E),
-                ),
-              )),
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              "Or continue with",
+              style: TextStyle(
+                color: Color(0xFF3D606E),
+              ),
+            ),
+          ),
           Expanded(
             child: Divider(
               color: Colors.white,
@@ -311,34 +339,34 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
       height: 70,
       decoration: isActive
           ? BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey[300]!, // ensure non-nullable
-            spreadRadius: 2,
-            blurRadius: 7,
-          )
-        ],
-        borderRadius: BorderRadius.circular(15),
-      )
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[300]!, 
+                  spreadRadius: 2,
+                  blurRadius: 7,
+                )
+              ],
+            )
           : BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.grey[400]!),
-      ),
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: Colors.grey[400]!),
+            ),
       child: Center(
         child: Container(
           decoration: isActive
               ? BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(35),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey[400]!,
-                spreadRadius: 2,
-                blurRadius: 8,
-              )
-            ],
-          )
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(35),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey[400]!,
+                      spreadRadius: 2,
+                      blurRadius: 8,
+                    )
+                  ],
+                )
               : const BoxDecoration(),
           child: Image.asset(
             image,

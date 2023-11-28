@@ -11,7 +11,7 @@ void main() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   // Check if token exists
   String token = prefs.getString("serverToken") ?? "";
-
+  
   runApp(MyApp(token));
 }
 
