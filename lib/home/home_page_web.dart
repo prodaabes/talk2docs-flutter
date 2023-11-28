@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:talk2docs/home/file_upload_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:talk2docs/home/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,13 +17,13 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
   List<String> chatHistory = [];
   late SharedPreferences prefs;
   late String fullName = "";
-   List<Map<String, String>> chatHistory2 = [];
+  List<Map<String, String>> chatHistory2 = [];
 
   @override
   void initState() {
     super.initState();
     _loadPrefs();
-    _loadChatHistory(); 
+    _loadChatHistory();
   }
 
   _loadPrefs() async {
@@ -35,10 +35,10 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
 
   void handleUserInput() {
     // Implement the logic to handle user input and update chat history
-    setState(() {
-      chatHistory.add('You: $userQuestion');
-      chatHistory.add('Bot: This is a dummy response.');
-    });
+    // setState(() {
+    //   chatHistory.add('You: $userQuestion');
+    //   chatHistory.add('Bot: This is a dummy response.');
+    // });
   }
 
   void editChatName(String chatId, String newName) {
@@ -52,19 +52,17 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
   }
 
   _loadChatHistory() {
-  // Replace this with your logic to load chat history from JSON
-  // For example, you can read the JSON from a file or an API response
-  String chatHistoryJson =
-      '[{"id": "1", "name": "General Chat"},{"id": "2", "name": "Support Chat"},{"id": "3", "name": "Team Chat"}]';
+    // Replace this with your logic to load chat history from JSON
+    // For example, you can read the JSON from a file or an API response
+    String chatHistoryJson =
+        '[{"id": "1", "name": "General Chat"},{"id": "2", "name": "Support Chat"},{"id": "3", "name": "Team Chat"}]';
 
-  // Explicitly convert each item to Map<String, String>
-  List<dynamic> decodedList = json.decode(chatHistoryJson);
-  chatHistory2 = List<Map<String, String>>.from(
-    decodedList.map((item) => Map<String, String>.from(item)),
-  );
-}
-
-  
+    // Explicitly convert each item to Map<String, String>
+    List<dynamic> decodedList = json.decode(chatHistoryJson);
+    chatHistory2 = List<Map<String, String>>.from(
+      decodedList.map((item) => Map<String, String>.from(item)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +94,8 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                   const Divider(
                     color: Colors.white,
                   ),
-                  
-                 Expanded(
+
+                  Expanded(
                     child: ListView.builder(
                       itemCount: chatHistory2.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -134,8 +132,7 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                               fontSize: 16,
                             ),
                           ),
-
-                            trailing: IconButton(
+                          trailing: IconButton(
                             icon: const Icon(Icons.exit_to_app),
                             onPressed: () {
                               logout();
@@ -168,6 +165,23 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                         const Text(
                           'Talk2Docs',
                           style: TextStyle(fontSize: 24),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                openFileUploadModal(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(horizontal: 8),
+                              ),
+                              child: Text(
+                                'Upload Docs',
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
                         Flexible(
@@ -255,14 +269,14 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.all(16.0),
-                  color: Colors.white,
-                  child: TextField(
-                    onChanged: (value) {
-                      setState(() {
-                        userQuestion = value;
-                      });
-                    },
+                padding: const EdgeInsets.all(16.0),
+                color: Colors.white,
+                child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      userQuestion = value;
+                    });
+                  },
                     decoration: InputDecoration(
                       labelText: 'Ask a question',
                       border: OutlineInputBorder(
