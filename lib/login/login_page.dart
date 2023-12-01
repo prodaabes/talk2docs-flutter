@@ -35,11 +35,11 @@ class LoginPageState<T extends LoginPage> extends State<T> {
 
      
       if (!isSuccess) {
-        print("Error");
         Utils().showSnackBar(context, 'Incorrect Credentials');
         return;
       }
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HomePage()));
+
     });
   }
 }

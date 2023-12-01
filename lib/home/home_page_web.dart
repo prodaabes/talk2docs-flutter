@@ -1,9 +1,10 @@
 import 'dart:convert';
-import 'package:talk2docs/home/file_upload_modal.dart';
+import 'package:talk2docs/home/web/file_upload_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:talk2docs/home/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'chat_item_widget.dart';
+import 'package:talk2docs/views/chat_bubble.dart';
+import 'web/chat_item_widget.dart';
 
 class HomePageWeb extends HomePage {
   HomePageWeb({Key? key}) : super(key: key);
@@ -302,38 +303,6 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class ChatBubble extends StatelessWidget {
-  final String message;
-  final bool isUser;
-
-  const ChatBubble({Key? key, required this.message, required this.isUser})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        decoration: BoxDecoration(
-          color: isUser ? const Color(0xFF000026) : Colors.grey,
-          borderRadius: BorderRadius.only(
-            topRight: isUser ? Radius.circular(20) : Radius.zero,
-            topLeft: isUser ? Radius.zero : Radius.circular(20),
-            bottomLeft: Radius.circular(20),
-            bottomRight: Radius.circular(20),
-          ),
-        ),
-        child: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
-        ),
       ),
     );
   }
