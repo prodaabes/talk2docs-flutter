@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
 class FileUploadModal extends StatefulWidget {
+  const FileUploadModal({super.key});
+
   @override
   _FileUploadModalState createState() => _FileUploadModalState();
 }
@@ -27,7 +29,7 @@ class _FileUploadModalState extends State<FileUploadModal> {
     return Dialog(
       child: Container(
         padding: const EdgeInsets.all(16),
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
           maxWidth: 800, 
           maxHeight: 700, 
         ),
@@ -35,7 +37,7 @@ class _FileUploadModalState extends State<FileUploadModal> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            const Text(
               'Upload Files',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
@@ -44,7 +46,7 @@ class _FileUploadModalState extends State<FileUploadModal> {
               onPressed: () {
                 _handleFilePick();
               },
-              child: Text('Upload Files'),
+              child: const Text('Upload Files'),
             ),
             const SizedBox(height: 16),
             DataTable(
@@ -58,7 +60,7 @@ class _FileUploadModalState extends State<FileUploadModal> {
                   DataCell(Text(file.name)),
                   DataCell(Text(file.extension ?? '')),
                   DataCell(IconButton(
-                    icon: Icon(Icons.close),
+                    icon: const Icon(Icons.close),
                     onPressed: () {
                       setState(() {
                         selectedFiles.remove(file);
@@ -76,7 +78,7 @@ class _FileUploadModalState extends State<FileUploadModal> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Close'),
+                  child: const Text('Close'),
                 ),
               ],
             ),
@@ -92,7 +94,7 @@ void openFileUploadModal(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return Align(
+      return const Align(
         alignment: Alignment.center,
         child: FileUploadModal(),
       );

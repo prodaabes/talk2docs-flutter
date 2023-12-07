@@ -275,7 +275,7 @@ class _SignupPageWebState extends SignupPageState<SignupPageWeb>
             },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
-              backgroundColor: Color.fromARGB(255, 42, 143, 120),
+              backgroundColor: const Color.fromARGB(255, 42, 143, 120),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),

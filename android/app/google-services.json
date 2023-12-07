@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "533897194325",
+    "project_id": "talk2docs-36ae4",
+    "storage_bucket": "talk2docs-36ae4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:533897194325:android:8153867ff1db1b2dc5dddc",
+        "android_client_info": {
+          "package_name": "com.talk2docs.talk2docs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "533897194325-g7s1itb8olrgjg7rht71tc6tfu7t1toa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgHOLFMNwGceiMsjlDM64LfUZLYEluH_U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "533897194325-g7s1itb8olrgjg7rht71tc6tfu7t1toa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -22,10 +22,10 @@ class ChatItemWidget extends StatelessWidget {
       child: ListTile(
         title: Text(
           chatName,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         trailing: PopupMenuButton<String>(
-          icon: Icon(
+          icon: const Icon(
             Icons.more_vert,
             color: Colors.white,
           ),

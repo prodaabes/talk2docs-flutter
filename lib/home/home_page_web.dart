@@ -7,7 +7,7 @@ import 'package:talk2docs/views/chat_bubble.dart';
 import 'web/chat_item_widget.dart';
 
 class HomePageWeb extends HomePage {
-  HomePageWeb({Key? key}) : super(key: key);
+  const HomePageWeb({Key? key}) : super(key: key);
 
   @override
   _HomePageWebState createState() => _HomePageWebState();
@@ -44,11 +44,6 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
 
   void editChatName(String chatId, String newName) {
     // Implement the logic to edit chat name
-    // Example: Call your API or update your chat data
-  }
-
-  void deleteChat(String chatId) {
-    // Implement the logic to delete chat
     // Example: Call your API or update your chat data
   }
 
@@ -109,7 +104,7 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                           },
                           onDeleteChat: (chatId) {
                             // Implement the logic to delete chat
-                            deleteChat(chatId);
+                            deleteChat(chatId, () {});
                           },
                         );
                       },
@@ -175,9 +170,9 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                                 openFileUploadModal(context);
                               },
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'Upload Docs',
                                 style: TextStyle(fontSize: 14),
                               ),
@@ -290,7 +285,7 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                         },
                       ),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.send),
+                        icon: const Icon(Icons.send),
                         onPressed: () {
                           // Implement the logic to handle user input and update chat history
                           handleUserInput();
