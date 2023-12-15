@@ -3,6 +3,7 @@ import 'package:talk2docs/login/login_page.dart';
 import '../signup/signup_page_web.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPageWeb extends LoginPage {
   const LoginPageWeb({super.key});
@@ -232,7 +233,7 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
         const SizedBox(height: 30),
         TextField(
           controller: passwordController,
-          obscureText: !_isPasswordVisible, 
+          obscureText: !_isPasswordVisible,
           decoration: InputDecoration(
             hintText: 'Password',
             counterText: 'Forgot password?',
@@ -320,20 +321,24 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
             ),
           ),
         ]),
-        const SizedBox(height: 40),
-        Row(
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.only(left: 115),
+          child:  Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _loginWithButton(image: 'images/google.png'),
-            _loginWithButton(image: 'images/github.png', isActive: true),
-            _loginWithButton(image: 'images/facebook.png'),
+            _loginWithGoogleButton(
+              isActive: true,
+            ),
           ],
         ),
+          )
+       
       ],
     );
   }
 
-  Widget _loginWithButton({required String image, bool isActive = false}) {
+  Widget _loginWithGoogleButton({bool isActive = false}) {
     return Container(
       width: 90,
       height: 70,
@@ -343,7 +348,7 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey[300]!, 
+                  color: Colors.grey[300]!,
                   spreadRadius: 2,
                   blurRadius: 7,
                 )
@@ -355,25 +360,58 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
             ),
       child: Center(
         child: Container(
-          decoration: isActive
-              ? BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(35),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey[400]!,
-                      spreadRadius: 2,
-                      blurRadius: 8,
-                    )
-                  ],
-                )
-              : const BoxDecoration(),
-          child: Image.asset(
-            image,
-            width: 35,
+          child: ElevatedButton(
+            onPressed: _handleGoogleSignIn,
+            style: ElevatedButton.styleFrom(
+              primary: Colors.white,
+              onPrimary: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'images/google.png',
+                  width: 30,
+                  height: 70,
+                ),
+                const SizedBox(width: 10),
+                
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  void _handleGoogleSignIn() async {
+    try {
+      // Initialize GoogleSignIn
+      final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+
+      // Sign in with Google
+      final GoogleSignInAccount? googleSignInAccount =
+          await _googleSignIn.signIn();
+
+      // Handle the sign-in result
+      if (googleSignInAccount != null) {
+        // You can get user details like name and email
+        String displayName = googleSignInAccount.displayName ?? "";
+        String email = googleSignInAccount.email ?? "";
+
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+
+        String accessToken = googleSignInAuthentication.accessToken ?? "";
+        String idToken = googleSignInAuthentication.idToken ?? "";
+        
+        loginGoogle(context, email, accessToken,displayName);
+      }
+    } catch (error) {
+      print('Error during Google sign-in: $error');
+    }
   }
 }

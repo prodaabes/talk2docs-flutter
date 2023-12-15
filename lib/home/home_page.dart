@@ -21,7 +21,7 @@ class HomePageState<T extends HomePage> extends State<T> {
   @override
   Widget build(BuildContext context) {
     if (kIsWeb) {
-      return const HomePageWeb();
+      return HomePageWeb();
     } else {
       return const HomePageMobile();
     }
@@ -51,7 +51,7 @@ class HomePageState<T extends HomePage> extends State<T> {
     });
   }
 
-  void removeFile(String chatId, String name, Function() callback) {
+void removeFile(String chatId, String name, Function() callback) {
     API().removeFile(chatId, name, (isSuccess) {
 
       if (!isSuccess) {

@@ -1,64 +1,88 @@
 import 'dart:convert';
-import 'package:talk2docs/home/web/file_upload_modal.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:talk2docs/api.dart';
 import 'package:talk2docs/home/home_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:talk2docs/models/chat.dart';
+import 'package:talk2docs/models/message.dart';
+import 'package:uuid/uuid.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:path/path.dart';
+import 'web/file_upload_modal.dart';
 import 'package:talk2docs/views/chat_bubble.dart';
-import 'web/chat_item_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePageWeb extends HomePage {
-  const HomePageWeb({Key? key}) : super(key: key);
+  HomePageWeb({Key? key}) : super(key: key);
 
   @override
   _HomePageWebState createState() => _HomePageWebState();
 }
 
 class _HomePageWebState extends HomePageState<HomePageWeb> {
-  String userQuestion = '';
-  List<String> chatHistory = [];
   late SharedPreferences prefs;
   late String fullName = "";
-  List<Map<String, String>> chatHistory2 = [];
+  IOWebSocketChannel? channel;
+
+  final TextEditingController textController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+
+  List<Chat>? _chats;
+  int currentIndex = 0;
+  List<Message>? _messages;
+  bool isFieldEmpty = true;
+  bool isTyping = false;
 
   @override
-  void initState() {
-    super.initState();
-    _loadPrefs();
-    _loadChatHistory();
-  }
-
-  _loadPrefs() async {
+void initState() {
+  super.initState();
+  _loadPrefs(); 
+   getChats((chats) {
+    setState(() {
+      _chats = chats;
+      getMessages(_chats![currentIndex].id, (messages) {
+        startChat(_chats![currentIndex].id, () {
+          setState(() {
+            _messages = messages;
+          });
+          listenForMessages();
+        });
+      });
+    });
+  });
+}
+_loadPrefs() async {
     prefs = await SharedPreferences.getInstance();
     fullName = prefs.getString("fullName") ?? "";
     print(fullName);
     setState(() {});
   }
 
-  void handleUserInput() {
-    // Implement the logic to handle user input and update chat history
-    // setState(() {
-    //   chatHistory.add('You: $userQuestion');
-    //   chatHistory.add('Bot: This is a dummy response.');
-    // });
-  }
+  listenForMessages() {
+    channel = IOWebSocketChannel.connect(API.SOCKET_URL);
+    channel?.stream.listen(
+      (message) {
+        setState(() {
+          _messages?.add(Message(
+              id: const Uuid().v4(),
+              chatId: _chats![currentIndex].id,
+              isQuestion: false,
+              content: message));
+          isTyping = false;
+        });
 
-  void editChatName(String chatId, String newName) {
-    // Implement the logic to edit chat name
-    // Example: Call your API or update your chat data
-  }
-
-  _loadChatHistory() {
-    // Replace this with your logic to load chat history from JSON
-    // For example, you can read the JSON from a file or an API response
-    String chatHistoryJson =
-        '[{"id": "1", "name": "General Chat"},{"id": "2", "name": "Support Chat"},{"id": "3", "name": "Team Chat"}]';
-
-    // Explicitly convert each item to Map<String, String>
-    List<dynamic> decodedList = json.decode(chatHistoryJson);
-    chatHistory2 = List<Map<String, String>>.from(
-      decodedList.map((item) => Map<String, String>.from(item)),
+        Future.delayed(const Duration(milliseconds: 50), () {
+          setState(() {
+            scrollToBottom();
+          });
+        });
+      },
+      onDone: () {
+        listenForMessages();
+      },
     );
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -66,14 +90,12 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
       backgroundColor: const Color(0xDDFFFFFF),
       body: Row(
         children: [
-          // Sidebar
           Drawer(
             child: Container(
               color: const Color(0xFF000026),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Other menu items
                   ListTile(
                     title: const Text(
                       'Talk2Docs',
@@ -90,22 +112,32 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                   const Divider(
                     color: Colors.white,
                   ),
-
                   Expanded(
                     child: ListView.builder(
-                      itemCount: chatHistory2.length,
+                      itemCount: _chats?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
-                        return ChatItemWidget(
-                          chatId: chatHistory2[index]['id']!,
-                          chatName: chatHistory2[index]['name']!,
-                          onEditChatName: (newName) {
-                            // Implement the logic to edit chat name
-                            editChatName(chatHistory2[index]['id']!, newName);
-                          },
-                          onDeleteChat: (chatId) {
-                            // Implement the logic to delete chat
-                            deleteChat(chatId, () {});
-                          },
+                        return Column(
+                          children: [
+                            ListTile(
+                              title: Text(_chats![index].title),
+                              onTap: () {
+                                setState(() {
+                                  currentIndex = index;
+                                  _messages = null;
+                                });
+                                getMessages(
+                                    _chats![currentIndex].id, (messages) {
+                                  startChat(_chats![currentIndex].id, () {
+                                    setState(() {
+                                      _messages = messages;
+                                    });
+                                    listenForMessages();
+                                  });
+                                });
+                              },
+                            ),
+                            const Divider(height: 0),
+                          ],
                         );
                       },
                     ),
@@ -148,7 +180,6 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
             thickness: 1,
             color: Colors.grey,
           ),
-
           Expanded(
             child: Column(
               children: [
@@ -162,102 +193,14 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                           'Talk2Docs',
                           style: TextStyle(fontSize: 24),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                openFileUploadModal(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                              ),
-                              child: const Text(
-                                'Upload Docs',
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
                         Flexible(
-                          child: ListView(
-                            children: const [
-                              // Fake conversation for demonstration
-                              ChatBubble(
-                                  message:
-                                      'Bot: Hello! How can I help you today?',
-                                  isUser: false),
-                              ChatBubble(
-                                  message:
-                                      'You: Hi! I have a question about document management.',
-                                  isUser: true),
-                              ChatBubble(
-                                  message:
-                                      'Bot: Sure, feel free to ask your question.',
-                                  isUser: false),
-                              ChatBubble(
-                                  message:
-                                      'You: Is it possible to organize documents by categories?',
-                                  isUser: true),
-                              ChatBubble(
-                                  message:
-                                      'Bot: Absolutely! You can create custom categories for better organization.',
-                                  isUser: false),
-                              ChatBubble(
-                                  message:
-                                      'You: That sounds great! How can I get started?',
-                                  isUser: true),
-                              ChatBubble(
-                                  message:
-                                      'Bot: You can go to the settings and find the "Categories" section.',
-                                  isUser: false),
-                              ChatBubble(
-                                  message:
-                                      'You: Thank you! I will check it out.',
-                                  isUser: true),
-                              ChatBubble(
-                                  message:
-                                      'Bot: You\'re welcome! If you have any more questions, feel free to ask.',
-                                  isUser: false),
-                              ChatBubble(
-                                  message: 'You: Sure, I will do that.',
-                                  isUser: true),
-                              ChatBubble(
-                                  message: 'Bot: Have a great day!',
-                                  isUser: false),
-                              ChatBubble(
-                                  message:
-                                      'You: I have another question about file formats.',
-                                  isUser: true),
-                              ChatBubble(
-                                  message:
-                                      'Bot: Of course! What would you like to know about file formats?',
-                                  isUser: false),
-                              ChatBubble(
-                                  message:
-                                      'You: Can I upload PDF and Word documents?',
-                                  isUser: true),
-                              ChatBubble(
-                                  message:
-                                      'Bot: Yes, you can upload both PDF and Word documents.',
-                                  isUser: false),
-                              ChatBubble(
-                                  message:
-                                      'You: That\'s convenient. Thanks for the information!',
-                                  isUser: true),
-                              ChatBubble(
-                                  message:
-                                      'Bot: Anytime! If you have more questions, feel free to ask.',
-                                  isUser: false),
-                              ChatBubble(
-                                  message: 'You: I appreciate your assistance.',
-                                  isUser: true),
-                              ChatBubble(
-                                  message:
-                                      'Bot: It\'s my pleasure! Have a wonderful day!',
-                                  isUser: false),
-                            ],
+                          child: ListView.builder(
+                            itemCount: _messages?.length ?? 0,
+                            itemBuilder: (BuildContext context, int i) {
+                              Message msg = _messages![i];
+                              return ChatBubble(
+                                  message: msg.content, isUser: msg.isQuestion);
+                            },
                           ),
                         ),
                       ],
@@ -265,14 +208,14 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                   ),
                 ),
                 Container(
-                padding: const EdgeInsets.all(16.0),
-                color: Colors.white,
-                child: TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      userQuestion = value;
-                    });
-                  },
+                  padding: const EdgeInsets.all(16.0),
+                  color: Colors.white,
+                  child: TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        isFieldEmpty = value.isEmpty;
+                      });
+                    },
                     decoration: InputDecoration(
                       labelText: 'Ask a question',
                       border: OutlineInputBorder(
@@ -281,16 +224,17 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                       prefixIcon: IconButton(
                         icon: const Icon(Icons.attach_file),
                         onPressed: () {
-                          // Implement the logic to attach PDF files
+                          showFilesDialog(context);
                         },
                       ),
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.send),
-                        onPressed: () {
-                          // Implement the logic to handle user input and update chat history
-                          handleUserInput();
-                        },
-                      ),
+                      suffixIcon: isFieldEmpty
+                          ? null
+                          : IconButton(
+                              icon: const Icon(Icons.send),
+                              onPressed: () {
+                                sendMessage();
+                              },
+                            ),
                     ),
                   ),
                 ),
@@ -300,5 +244,46 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
         ],
       ),
     );
+  }
+
+  void showFilesDialog(BuildContext context) {
+    // Implement the file upload dialog for the web version
+    // You may use the existing logic or adapt it for the web
+  }
+
+  void scrollToBottom() {
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void sendMessage() {
+    Message msg = Message(
+        id: const Uuid().v4(),
+        chatId: _chats![currentIndex].id,
+        isQuestion: true,
+        content: textController.text);
+
+    channel?.sink.add(msg.content);
+
+    setState(() {
+      _messages!.add(msg);
+    });
+
+    Future.delayed(const Duration(milliseconds: 50), () {
+      setState(() {
+        scrollToBottom();
+      });
+    });
+
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        isTyping = true;
+      });
+    });
+
+    textController.text = "";
   }
 }

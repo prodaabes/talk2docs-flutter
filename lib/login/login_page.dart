@@ -42,4 +42,21 @@ class LoginPageState<T extends LoginPage> extends State<T> {
 
     });
   }
+
+  void loginGoogle(BuildContext context, String googleEmail, String googleToken,String displayName) {
+    Utils().showLoaderDialog(context, 'Logging In');
+
+    authService.loginGoogle(googleEmail, googleToken,displayName,(isSuccess) {
+   
+      Navigator.pop(context);
+
+     
+      if (!isSuccess) {
+        Utils().showSnackBar(context, 'Incorrect Credentials');
+        return;
+      }
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HomePage()));
+
+    });
+  }
 }

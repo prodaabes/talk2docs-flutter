@@ -14,7 +14,7 @@ class _FileUploadModalState extends State<FileUploadModal> {
   Future<void> _handleFilePick() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'gif', 'pdf', 'doc'], // Include image formats
+      allowedExtensions: ['jpg', 'png', 'gif', 'pdf', 'doc'],
     );
 
     if (result != null) {

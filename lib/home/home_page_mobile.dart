@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -463,9 +462,11 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
 
                               // get the messages for the selected chat based on chat id
                               getMessages(_chats![currentIndex].id, (messages) {
-                                setState(() {
-                                  // initialize the new messages
-                                  _messages = messages;
+                                startChat(_chats![currentIndex].id, () {
+                                  setState(() {
+                                    _messages = messages;
+                                  });
+                                  listenForMessages();
                                 });
                               });
                             },
