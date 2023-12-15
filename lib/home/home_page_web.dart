@@ -8,6 +8,7 @@ import 'package:talk2docs/models/message.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:path/path.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'web/file_upload_modal.dart';
 import 'package:talk2docs/views/chat_bubble.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,7 +23,7 @@ class HomePageWeb extends HomePage {
 class _HomePageWebState extends HomePageState<HomePageWeb> {
   late SharedPreferences prefs;
   late String fullName = "";
-  IOWebSocketChannel? channel;
+  WebSocketChannel? channel;
 
   final TextEditingController textController = TextEditingController();
   final ScrollController scrollController = ScrollController();
@@ -34,24 +35,25 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
   bool isTyping = false;
 
   @override
-void initState() {
-  super.initState();
-  _loadPrefs(); 
-   getChats((chats) {
-    setState(() {
-      _chats = chats;
-      getMessages(_chats![currentIndex].id, (messages) {
-        startChat(_chats![currentIndex].id, () {
-          setState(() {
-            _messages = messages;
+  void initState() {
+    super.initState();
+    _loadPrefs();
+    getChats((chats) {
+      setState(() {
+        _chats = chats;
+        getMessages(_chats![currentIndex].id, (messages) {
+          startChat(_chats![currentIndex].id, () {
+            setState(() {
+              _messages = messages;
+            });
+            listenForMessages();
           });
-          listenForMessages();
         });
       });
     });
-  });
-}
-_loadPrefs() async {
+  }
+
+  _loadPrefs() async {
     prefs = await SharedPreferences.getInstance();
     fullName = prefs.getString("fullName") ?? "";
     print(fullName);
@@ -59,7 +61,9 @@ _loadPrefs() async {
   }
 
   listenForMessages() {
-    channel = IOWebSocketChannel.connect(API.SOCKET_URL);
+    channel = WebSocketChannel.connect(
+      Uri.parse(API.SOCKET_URL),
+    );;
     channel?.stream.listen(
       (message) {
         setState(() {
@@ -82,7 +86,6 @@ _loadPrefs() async {
       },
     );
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -125,8 +128,8 @@ _loadPrefs() async {
                                   currentIndex = index;
                                   _messages = null;
                                 });
-                                getMessages(
-                                    _chats![currentIndex].id, (messages) {
+                                getMessages(_chats![currentIndex].id,
+                                    (messages) {
                                   startChat(_chats![currentIndex].id, () {
                                     setState(() {
                                       _messages = messages;
@@ -195,6 +198,7 @@ _loadPrefs() async {
                         ),
                         Flexible(
                           child: ListView.builder(
+                            controller: scrollController,
                             itemCount: _messages?.length ?? 0,
                             itemBuilder: (BuildContext context, int i) {
                               Message msg = _messages![i];
@@ -211,6 +215,7 @@ _loadPrefs() async {
                   padding: const EdgeInsets.all(16.0),
                   color: Colors.white,
                   child: TextField(
+                    controller: textController,
                     onChanged: (value) {
                       setState(() {
                         isFieldEmpty = value.isEmpty;

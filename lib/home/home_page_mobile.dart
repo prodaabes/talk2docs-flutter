@@ -10,6 +10,7 @@ import 'package:talk2docs/models/upload_file_model.dart';
 import 'package:talk2docs/views/chat_bubble.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class HomePageMobile extends HomePage {
   const HomePageMobile({super.key});
@@ -19,7 +20,7 @@ class HomePageMobile extends HomePage {
 }
 
 class _HomePageMobile extends HomePageState<HomePageMobile> {
-  IOWebSocketChannel? channel;
+  WebSocketChannel? channel;
 
   final TextEditingController textController = TextEditingController();
   final ScrollController scrollController = ScrollController();
@@ -63,7 +64,9 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
   }
 
   listenForMessages() {
-    channel = IOWebSocketChannel.connect(API.SOCKET_URL);
+    channel = WebSocketChannel.connect(
+      Uri.parse(API.SOCKET_URL),
+    );
     channel?.stream.listen((message) {
       setState(() {
         _messages?.add(Message(
