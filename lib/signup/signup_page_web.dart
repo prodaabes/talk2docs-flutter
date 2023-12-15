@@ -275,7 +275,7 @@ class _SignupPageWebState extends SignupPageState<SignupPageWeb>
             },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
-              backgroundColor: Color.fromARGB(255, 42, 143, 120),
+              backgroundColor: const Color.fromARGB(255, 42, 143, 120),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
@@ -287,84 +287,8 @@ class _SignupPageWebState extends SignupPageState<SignupPageWeb>
             ),
           ),
         ),
-        const SizedBox(height: 40),
-        const Row(children: [
-          Expanded(
-            child: Divider(
-              color: Colors.white,
-              height: 50,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              "Or continue with",
-              style: TextStyle(
-                color: Color(0xFF3D606E),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Divider(
-              color: Colors.white,
-              height: 50,
-            ),
-          ),
-        ]),
-        const SizedBox(height: 40),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _loginWithButton(image: 'images/google.png'),
-            _loginWithButton(image: 'images/github.png', isActive: true),
-            _loginWithButton(image: 'images/facebook.png'),
-          ],
-        ),
       ],
     );
   }
 
-  Widget _loginWithButton({required String image, bool isActive = false}) {
-    return Container(
-      width: 90,
-      height: 70,
-      decoration: isActive
-          ? BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey[300]!,
-                  spreadRadius: 3,
-                  blurRadius: 10,
-                )
-              ],
-              borderRadius: BorderRadius.circular(15),
-            )
-          : BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.grey[400]!),
-            ),
-      child: Center(
-        child: Container(
-          decoration: isActive
-              ? BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(35),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey[400]!,
-                      spreadRadius: 2,
-                      blurRadius: 8,
-                    )
-                  ],
-                )
-              : const BoxDecoration(),
-          child: Image.asset(
-            image,
-            width: 35,
-          ),
-        ),
-      ),
-    );
-  }
 }

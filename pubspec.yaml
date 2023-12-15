@@ -31,6 +31,10 @@ dependencies:
   flutter:
     sdk: flutter
   file_picker: ^6.1.1
+  firebase_core: ^2.24.0
+  firebase_auth: ^4.15.0
+  google_sign_in: ^6.1.6
+  
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -45,10 +49,12 @@ dependencies:
   sqflite: ^2.3.0
   path_provider: ^2.1.1
   path: ^1.8.3
+  web_socket_channel: ^2.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

@@ -7,7 +7,7 @@ import 'package:talk2docs/utils.dart';
 import 'package:talk2docs/home/home_page.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({Key? key});
+  const SignupPage({super.key});
 
   @override
   SignupPageState createState() => SignupPageState();

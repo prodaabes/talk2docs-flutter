@@ -68,7 +68,7 @@ class _WelcomePageMobileState extends WelcomePageState<WelcomePageMobile> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
+                        backgroundColor: Colors.transparent,
                         side: const BorderSide(color: Colors.white70, width: 2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
@@ -98,7 +98,7 @@ class _WelcomePageMobileState extends WelcomePageState<WelcomePageMobile> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
+                        backgroundColor: Colors.transparent,
                         side: const BorderSide(color: Colors.white70, width: 2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
