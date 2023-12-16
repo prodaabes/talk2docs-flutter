@@ -1,6 +1,8 @@
+import 'dart:typed_data';
+
 class UploadFile {
   final String name;
-  final String path;
+  final Uint8List bytes;
 
-  const UploadFile({required this.name, required this.path});
+  const UploadFile({required this.name, required this.bytes});
 }

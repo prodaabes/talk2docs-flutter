@@ -1,15 +1,8 @@
-import 'dart:convert';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:talk2docs/api.dart';
 import 'package:talk2docs/home/home_page.dart';
-import 'package:talk2docs/models/chat.dart';
 import 'package:talk2docs/models/message.dart';
 import 'package:uuid/uuid.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:path/path.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'web/file_upload_modal.dart';
 import 'package:talk2docs/views/chat_bubble.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,34 +16,11 @@ class HomePageWeb extends HomePage {
 class _HomePageWebState extends HomePageState<HomePageWeb> {
   late SharedPreferences prefs;
   late String fullName = "";
-  WebSocketChannel? channel;
-
-  final TextEditingController textController = TextEditingController();
-  final ScrollController scrollController = ScrollController();
-
-  List<Chat>? _chats;
-  int currentIndex = 0;
-  List<Message>? _messages;
-  bool isFieldEmpty = true;
-  bool isTyping = false;
 
   @override
   void initState() {
     super.initState();
     _loadPrefs();
-    getChats((chats) {
-      setState(() {
-        _chats = chats;
-        getMessages(_chats![currentIndex].id, (messages) {
-          startChat(_chats![currentIndex].id, () {
-            setState(() {
-              _messages = messages;
-            });
-            listenForMessages();
-          });
-        });
-      });
-    });
   }
 
   _loadPrefs() async {
@@ -60,35 +30,10 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
     setState(() {});
   }
 
-  listenForMessages() {
-    channel = WebSocketChannel.connect(
-      Uri.parse(API.SOCKET_URL),
-    );;
-    channel?.stream.listen(
-      (message) {
-        setState(() {
-          _messages?.add(Message(
-              id: const Uuid().v4(),
-              chatId: _chats![currentIndex].id,
-              isQuestion: false,
-              content: message));
-          isTyping = false;
-        });
-
-        Future.delayed(const Duration(milliseconds: 50), () {
-          setState(() {
-            scrollToBottom();
-          });
-        });
-      },
-      onDone: () {
-        listenForMessages();
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    mContext = context;
+
     return Scaffold(
       backgroundColor: const Color(0xDDFFFFFF),
       body: Row(
@@ -117,22 +62,22 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: _chats?.length ?? 0,
+                      itemCount: chats?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
                         return Column(
                           children: [
                             ListTile(
-                              title: Text(_chats![index].title),
+                              title: Text(chats![index].title),
                               onTap: () {
                                 setState(() {
                                   currentIndex = index;
-                                  _messages = null;
+                                  messages = null;
                                 });
-                                getMessages(_chats![currentIndex].id,
+                                getMessages(chats![currentIndex].id,
                                     (messages) {
-                                  startChat(_chats![currentIndex].id, () {
+                                  startChat(chats![currentIndex].id, () {
                                     setState(() {
-                                      _messages = messages;
+                                      this.messages = messages;
                                     });
                                     listenForMessages();
                                   });
@@ -199,9 +144,9 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                         Flexible(
                           child: ListView.builder(
                             controller: scrollController,
-                            itemCount: _messages?.length ?? 0,
+                            itemCount: messages?.length ?? 0,
                             itemBuilder: (BuildContext context, int i) {
-                              Message msg = _messages![i];
+                              Message msg = messages![i];
                               return ChatBubble(
                                   message: msg.content, isUser: msg.isQuestion);
                             },
@@ -251,30 +196,17 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
     );
   }
 
-  void showFilesDialog(BuildContext context) {
-    // Implement the file upload dialog for the web version
-    // You may use the existing logic or adapt it for the web
-  }
-
-  void scrollToBottom() {
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
   void sendMessage() {
     Message msg = Message(
         id: const Uuid().v4(),
-        chatId: _chats![currentIndex].id,
+        chatId: chats![currentIndex].id,
         isQuestion: true,
         content: textController.text);
 
     channel?.sink.add(msg.content);
 
     setState(() {
-      _messages!.add(msg);
+      messages!.add(msg);
     });
 
     Future.delayed(const Duration(milliseconds: 50), () {
