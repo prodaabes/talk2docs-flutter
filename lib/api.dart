@@ -171,7 +171,7 @@ class API {
       request.fields['chatId'] = id;
 
       for (var f in files) {
-        final multipart = await http.MultipartFile.fromPath('files', f.path,
+        final multipart = await http.MultipartFile.fromBytes('files', f.bytes,
             filename: f.name);
         request.files.add(multipart);
       }

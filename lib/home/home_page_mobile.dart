@@ -1,16 +1,9 @@
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:talk2docs/api.dart';
 import 'package:talk2docs/home/home_page.dart';
 import 'package:talk2docs/models/chat.dart';
 import 'package:talk2docs/models/message.dart';
-import 'package:talk2docs/models/upload_file_model.dart';
 import 'package:talk2docs/views/chat_bubble.dart';
 import 'package:uuid/uuid.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class HomePageMobile extends HomePage {
   const HomePageMobile({super.key});
@@ -20,72 +13,6 @@ class HomePageMobile extends HomePage {
 }
 
 class _HomePageMobile extends HomePageState<HomePageMobile> {
-  WebSocketChannel? channel;
-
-  final TextEditingController textController = TextEditingController();
-  final ScrollController scrollController = ScrollController();
-
-  // this should be null at first to show a loading indicator in the drawer
-  List<Chat>? _chats;
-
-  // current chat index
-  int currentIndex = 0;
-
-  // this should be null at first to show a loading indicator in home page and
-  // prevent the user from sending new messages until get the messages from server.
-  List<Message>? _messages;
-
-  // this for check if the text field is empty or not
-  bool isFieldEmpty = true;
-
-  // this field will be true when waiting for server response
-  bool isTyping = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // get all chats for logged in user
-    getChats((chats) {
-      setState(() {
-        _chats = chats;
-
-        // get all messages for the first (selected) chat
-        getMessages(_chats![currentIndex].id, (messages) {
-          startChat(_chats![currentIndex].id, () {
-            setState(() {
-              _messages = messages;
-            });
-            listenForMessages();
-          });
-        });
-      });
-    });
-  }
-
-  listenForMessages() {
-    channel = WebSocketChannel.connect(
-      Uri.parse(API.SOCKET_URL),
-    );
-    channel?.stream.listen((message) {
-      setState(() {
-        _messages?.add(Message(
-            id: const Uuid().v4(),
-            chatId: _chats![currentIndex].id,
-            isQuestion: false,
-            content: message));
-        isTyping = false;
-      });
-
-      Future.delayed(const Duration(milliseconds: 50), () {
-        setState(() {
-          scrollToBottom();
-        });
-      });
-    }, onDone: () {
-      listenForMessages();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +24,7 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                (_chats != null && _chats!.isNotEmpty) ? _chats![currentIndex].title : 'Home',
+                (chats != null && chats!.isNotEmpty) ? chats![currentIndex].title : 'Home',
                 style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
               Visibility(
@@ -112,7 +39,7 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
           backgroundColor: const Color(0xFF000026),
         ),
         drawer: drawer(context),
-        body: _messages == null
+        body: messages == null
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -121,9 +48,9 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
                     child: ListView.builder(
                         controller: scrollController,
                         physics: const BouncingScrollPhysics(),
-                        itemCount: _messages!.length,
+                        itemCount: messages!.length,
                         itemBuilder: (BuildContext context, int i) {
-                          Message msg = _messages![i];
+                          Message msg = messages![i];
                           return ChatBubble(
                               message: msg.content, isUser: msg.isQuestion);
                         }),
@@ -155,14 +82,14 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
                                 onPressed: () {
                                   Message msg = Message(
                                       id: const Uuid().v4(),
-                                      chatId: _chats![currentIndex].id,
+                                      chatId: chats![currentIndex].id,
                                       isQuestion: true,
                                       content: textController.text);
 
                                   channel?.sink.add(msg.content);
 
                                   setState(() {
-                                    _messages!.add(msg);
+                                    messages!.add(msg);
                                   });
 
                                   Future.delayed(
@@ -200,126 +127,6 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
         isFieldEmpty = !isFieldEmpty;
       });
     }
-  }
-
-  void showFilesDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(builder: (context, setDialogState) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              child: Container(
-                height: 350,
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.all(Radius.circular(16))),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 16),
-                          child: Text(
-                            'Chat Files',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
-                        const Spacer(),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        )
-                      ],
-                    ),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _chats![currentIndex].files.length,
-                        itemBuilder: (BuildContext context, int i) {
-                          String file = _chats![currentIndex].files[i];
-
-                          return ListTile(
-                            leading: file.toLowerCase().endsWith('.pdf')
-                                ? Image.asset('assets/images/pdf.png',
-                                    width: 30, height: 30)
-                                : Image.asset('assets/images/picture.png',
-                                    width: 30, height: 25),
-                            title: Text(file),
-                            trailing: IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  removeFile(_chats![currentIndex].id, file,
-                                      () {
-                                    setDialogState(() {
-                                      _chats![currentIndex].files.removeAt(i);
-                                    });
-                                  });
-                                }),
-                          );
-                        }),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        const Spacer(),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 16),
-                          child: Opacity(
-                            opacity: _chats![currentIndex].files.length >= 4
-                                ? 0.5
-                                : 1,
-                            child: TextButton(
-                              onPressed: _chats![currentIndex].files.length >= 4
-                                  ? null
-                                  : () async {
-                                      FilePickerResult? result =
-                                          await FilePicker.platform.pickFiles(
-                                              type: FileType.custom,
-                                              allowedExtensions: [
-                                                'jpg',
-                                                'png',
-                                                'pdf'
-                                              ],
-                                              allowMultiple: false);
-
-                                      if (result != null) {
-                                        File file =
-                                            File(result.files.single.path!);
-                                        UploadFile uFile = UploadFile(
-                                            name: basename(file.path),
-                                            path: file.path);
-
-                                        uploadFiles(
-                                            _chats![currentIndex].id, [uFile],
-                                            () {
-                                          setDialogState(() {
-                                            _chats![currentIndex]
-                                                .files
-                                                .add(basename(file.path));
-                                          });
-                                        });
-                                      } else {
-                                        // User canceled the picker
-                                      }
-                                    },
-                              child: const Text('Upload File'),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          });
-        });
   }
 
   void showDeleteDialog(BuildContext context, int i) {
@@ -361,7 +168,7 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
                   Padding(
                     padding: const EdgeInsets.only(left: 16),
                     child: Text(
-                      'Delete the chat named \'${_chats![i].title}\' ?',
+                      'Delete the chat named \'${chats![i].title}\' ?',
                       style: const TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                   ),
@@ -379,16 +186,16 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
                             // this line to close the drawer
                             Navigator.pop(context);
 
-                            deleteChat(_chats![currentIndex].id, () {
+                            deleteChat(chats![currentIndex].id, () {
                               setState(() {
-                                // empty the _messages array
-                                _messages?.clear();
+                                // empty the messages array
+                                messages?.clear();
 
-                                // remove the chat from _chats list
-                                _chats?.removeAt(i);
+                                // remove the chat from chats list
+                                chats?.removeAt(i);
 
                                 // check if chats not empty, select the first chat after delete
-                                if (_chats!.isNotEmpty) {
+                                if (chats!.isNotEmpty) {
                                   currentIndex = 0;
                                 }
                               });
@@ -432,42 +239,42 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
                 newChat((id) {
                   setState(() {
 
-                    // check if _chats == null, then initialize it
-                    _chats ??= [];
+                    // check if chats == null, then initialize it
+                    chats ??= [];
 
-                    _messages = [];
+                    messages = [];
 
-                    _chats!.add(Chat(id: id, title: 'New Chat', files: []));
-                    currentIndex = _chats!.length - 1;
+                    chats!.add(Chat(id: id, title: 'New Chat', files: []));
+                    currentIndex = chats!.length - 1;
                   });
                 });
               }),
           const Divider(height: 0),
           Expanded(
-            child: _chats == null
+            child: chats == null
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
-                    itemCount: _chats!.length,
+                    itemCount: chats!.length,
                     itemBuilder: (BuildContext context, int i) {
                       return Column(
                         children: [
                           ListTile(
-                            title: Text(_chats![i].title),
+                            title: Text(chats![i].title),
                             onTap: () {
                               // this line to close the drawer
                               Navigator.pop(context);
 
-                              // here we change the chat id and empty the _messages to load new messages
+                              // here we change the chat id and empty the messages to load new messages
                               setState(() {
                                 currentIndex = i;
-                                _messages = null;
+                                messages = null;
                               });
 
                               // get the messages for the selected chat based on chat id
-                              getMessages(_chats![currentIndex].id, (messages) {
-                                startChat(_chats![currentIndex].id, () {
+                              getMessages(chats![currentIndex].id, (messages) {
+                                startChat(chats![currentIndex].id, () {
                                   setState(() {
-                                    _messages = messages;
+                                    this.messages = messages;
                                   });
                                   listenForMessages();
                                 });
@@ -494,14 +301,6 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
           ),
         ],
       ),
-    );
-  }
-
-  void scrollToBottom() {
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
     );
   }
 }
