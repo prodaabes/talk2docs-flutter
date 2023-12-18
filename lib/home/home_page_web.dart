@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:talk2docs/views/chat_bubble.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:talk2docs/models/chat.dart';
 
 class HomePageWeb extends HomePage {
   HomePageWeb({Key? key}) : super(key: key);
@@ -52,9 +53,21 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                         fontSize: 16,
                       ),
                     ),
+                    trailing: Image.asset('assets/images/pen_white.png',
+                        width: 40, height: 40),
                     onTap: () {
-                      // Implement the logic for Chat History
-                      // ...
+                      newChat((id) {
+                        setState(() {
+                          // check if chats == null, then initialize it
+                          chats ??= [];
+
+                          messages = [];
+
+                          chats!
+                              .add(Chat(id: id, title: 'New Chat', files: []));
+                          currentIndex = chats!.length - 1;
+                        });
+                      });
                     },
                   ),
                   const Divider(

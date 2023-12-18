@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:talk2docs/home/home_page.dart';
 
 class FileUploadModal extends StatefulWidget {
   const FileUploadModal({super.key});
@@ -14,7 +15,7 @@ class _FileUploadModalState extends State<FileUploadModal> {
   Future<void> _handleFilePick() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'gif', 'pdf', 'doc'],
+      allowedExtensions: ['jpg', 'png', 'pdf'],
     );
 
     if (result != null) {
@@ -30,8 +31,8 @@ class _FileUploadModalState extends State<FileUploadModal> {
       child: Container(
         padding: const EdgeInsets.all(16),
         constraints: const BoxConstraints(
-          maxWidth: 800, 
-          maxHeight: 700, 
+          maxWidth: 800,
+          maxHeight: 700,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
