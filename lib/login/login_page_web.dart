@@ -372,10 +372,13 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  'images/google.png',
-                  width: 30,
-                  height: 70,
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Image.asset(
+                    'images/google.png',
+                    width: 22,
+                    height: 70,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 

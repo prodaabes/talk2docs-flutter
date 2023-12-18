@@ -61,6 +61,11 @@ class HomePageState<T extends HomePage> extends State<T> {
             setState(() {
               this.messages = messages;
             });
+            Future.delayed(const Duration(milliseconds: 50), () {
+              setState(() {
+                scrollToBottom();
+              });
+            });
             listenForMessages();
           });
         });
@@ -94,7 +99,7 @@ class HomePageState<T extends HomePage> extends State<T> {
 
   @override
   Widget build(BuildContext context) {
-     mContext = context;
+    mContext = context;
     if (kIsWeb) {
       return HomePageWeb();
     } else {
@@ -103,26 +108,26 @@ class HomePageState<T extends HomePage> extends State<T> {
   }
 
   void getChats(Function(List<Chat> chats) callback) {
-  API().getChats((isSuccess, chats) {
-    if (!isSuccess) {
-      Utils().showSnackBar(mContext, 'Error getting chats');
-      return null;
-    }
+    API().getChats((isSuccess, chats) {
+      if (!isSuccess) {
+        Utils().showSnackBar(mContext, 'Error getting chats');
+        return null;
+      }
 
-    callback(chats);
-  });
-}
+      callback(chats);
+    });
+  }
 
-void getMessages(String chatId, Function(List<Message> messages) callback) {
-  API().getMessages(chatId, (isSuccess, messages) {
-    if (!isSuccess) {
-      Utils().showSnackBar(mContext, 'Error getting messages');
-      return null;
-    }
+  void getMessages(String chatId, Function(List<Message> messages) callback) {
+    API().getMessages(chatId, (isSuccess, messages) {
+      if (!isSuccess) {
+        Utils().showSnackBar(mContext, 'Error getting messages');
+        return null;
+      }
 
-    callback(messages);
-  });
-}
+      callback(messages);
+    });
+  }
 
   void removeFile(String chatId, String name, Function() callback) {
     API().removeFile(chatId, name, (isSuccess) {
@@ -295,7 +300,8 @@ void getMessages(String chatId, Function(List<Message> messages) callback) {
 
     if (result != null) {
       File file = File(result.files.single.path!);
-      UploadFile uFile = UploadFile(name: basename(file.path), bytes: result.files.single.bytes!);
+      UploadFile uFile = UploadFile(
+          name: basename(file.path), bytes: result.files.single.bytes!);
 
       uploadFiles(chats![currentIndex].id, [uFile], () {
         setDialogState(() {
@@ -308,31 +314,24 @@ void getMessages(String chatId, Function(List<Message> messages) callback) {
   }
 
   void uploadFileWeb(setDialogState) async {
-  // Use a suitable method to open a file picker dialog for web
-  // For example, you can use the FilePicker package for Flutter
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'png', 'pdf'],
+        allowMultiple: false);
 
-  FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'pdf'],
-      allowMultiple: false);
+    if (result != null) {
+      UploadFile uFile = UploadFile(
+          name: result.files.single.name, bytes: result.files.single.bytes!);
 
-  if (result != null) {
-    // Process the selected file
-    // For example, convert it to an UploadFile object
-    // Then, call your uploadFiles method to handle the upload
-
-    UploadFile uFile = UploadFile(name: result.files.single.name, bytes: result.files.single.bytes!);
-
-    uploadFiles(chats![currentIndex].id, [uFile], () {
-      setDialogState(() {
-        chats![currentIndex].files.add(result.files.single.name);
+      uploadFiles(chats![currentIndex].id, [uFile], () {
+        setDialogState(() {
+          chats![currentIndex].files.add(result.files.single.name);
+        });
       });
-    });
-  } else {
-    // User canceled the picker
+    } else {
+      // User canceled the picker
+    }
   }
-}
-
 
   void scrollToBottom() {
     scrollController.animateTo(

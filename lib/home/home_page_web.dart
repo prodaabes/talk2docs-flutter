@@ -41,20 +41,30 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
         children: [
           Drawer(
             child: Container(
-              color: const Color(0xFF000026),
+              decoration: const BoxDecoration(
+                color: Color(0xFF000026),
+                borderRadius: null,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ListTile(
-                    title: const Text(
-                      'Talk2Docs',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+                    title: const Padding(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Talk2Docs',
+                        style: TextStyle(
+                          color: Color(0xFF3BBA9C),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    trailing: Image.asset('assets/images/pen_white.png',
-                        width: 40, height: 40),
+                    trailing: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Image.asset('assets/images/edit.png',
+                          width: 25, height: 25),
+                    ),
                     onTap: () {
                       newChat((id) {
                         setState(() {
@@ -80,7 +90,12 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                         return Column(
                           children: [
                             ListTile(
-                              title: Text(chats![index].title),
+                              title: Text(
+                                chats![index].title,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
                               onTap: () {
                                 setState(() {
                                   currentIndex = index;
@@ -109,10 +124,11 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                       children: [
                         ListTile(
                           contentPadding: const EdgeInsets.all(16),
-                          leading: const CircleAvatar(
-                            backgroundColor: Colors.white,
+                          leading: CircleAvatar(
+                            // backgroundColor: Colors.black,
                             radius: 30,
-                            // backgroundImage: AssetImage('assets/profile_image.png'),
+                            child: Image.asset('assets/images/user.png',
+                                height: 33),
                           ),
                           title: Text(
                             fullName,
@@ -174,6 +190,9 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                   color: Colors.white,
                   child: TextField(
                     controller: textController,
+                    onSubmitted: (value) {
+                      sendMessage();
+                    },
                     onChanged: (value) {
                       setState(() {
                         isFieldEmpty = value.isEmpty;

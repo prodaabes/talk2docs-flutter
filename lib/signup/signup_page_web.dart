@@ -178,116 +178,119 @@ class _SignupPageWebState extends SignupPageState<SignupPageWeb>
   }
 
   Widget _formRegister() {
-    return Column(
-      children: [
-        TextField(
-          controller: firstNameController,
-          decoration: InputDecoration(
-            hintText: 'First Name',
-            filled: true,
-            fillColor: Colors.blueGrey[50],
-            labelStyle: const TextStyle(fontSize: 12),
-            contentPadding: const EdgeInsets.only(left: 30),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blueGrey[50]!),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blueGrey[50]!),
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-        ),
-        const SizedBox(height: 30),
-        TextField(
-          controller: lastNameController,
-          decoration: InputDecoration(
-            hintText: 'Last Name',
-            filled: true,
-            fillColor: Colors.blueGrey[50],
-            labelStyle: const TextStyle(fontSize: 12),
-            contentPadding: const EdgeInsets.only(left: 30),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blueGrey[50]!),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blueGrey[50]!),
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-        ),
-        const SizedBox(height: 30),
-        TextField(
-          controller: emailController,
-          decoration: InputDecoration(
-            hintText: 'Email',
-            filled: true,
-            fillColor: Colors.blueGrey[50],
-            labelStyle: const TextStyle(fontSize: 12),
-            contentPadding: const EdgeInsets.only(left: 30),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blueGrey[50]!),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blueGrey[50]!),
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-        ),
-        const SizedBox(height: 30),
-        TextField(
-          controller: passwordController,
-          obscureText: true,
-          decoration: InputDecoration(
-            hintText: 'Password',
-            filled: true,
-            fillColor: Colors.blueGrey[50],
-            labelStyle: const TextStyle(fontSize: 12),
-            contentPadding: const EdgeInsets.only(left: 30),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blueGrey[50]!),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blueGrey[50]!),
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-        ),
-        const SizedBox(height: 40),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: ElevatedButton(
-            onPressed: () {
-              // Get values from text fields
-              final firstName = firstNameController.text;
-              final lastName = lastNameController.text;
-              final email = emailController.text;
-              final password = _hashPassword(passwordController.text);
-
-              // Call the register method
-              register(context, firstName, lastName, email, password);
-            },
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: const Color.fromARGB(255, 42, 143, 120),
-              shape: RoundedRectangleBorder(
+    return Container(
+      margin: const EdgeInsets.only(top: 50),
+      child: Column(
+        children: [
+          TextField(
+            controller: firstNameController,
+            decoration: InputDecoration(
+              hintText: 'First Name',
+              filled: true,
+              fillColor: Colors.blueGrey[50],
+              labelStyle: const TextStyle(fontSize: 12),
+              contentPadding: const EdgeInsets.only(left: 30),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueGrey[50]!),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueGrey[50]!),
                 borderRadius: BorderRadius.circular(15),
               ),
             ),
-            child: const SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: Center(child: Text("Sign Up")),
+          ),
+          const SizedBox(height: 30),
+          TextField(
+            controller: lastNameController,
+            decoration: InputDecoration(
+              hintText: 'Last Name',
+              filled: true,
+              fillColor: Colors.blueGrey[50],
+              labelStyle: const TextStyle(fontSize: 12),
+              contentPadding: const EdgeInsets.only(left: 30),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueGrey[50]!),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueGrey[50]!),
+                borderRadius: BorderRadius.circular(15),
+              ),
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 30),
+          TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+              hintText: 'Email',
+              filled: true,
+              fillColor: Colors.blueGrey[50],
+              labelStyle: const TextStyle(fontSize: 12),
+              contentPadding: const EdgeInsets.only(left: 30),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueGrey[50]!),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueGrey[50]!),
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          TextField(
+            controller: passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              hintText: 'Password',
+              filled: true,
+              fillColor: Colors.blueGrey[50],
+              labelStyle: const TextStyle(fontSize: 12),
+              contentPadding: const EdgeInsets.only(left: 30),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueGrey[50]!),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blueGrey[50]!),
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: ElevatedButton(
+              onPressed: () {
+                // Get values from text fields
+                final firstName = firstNameController.text;
+                final lastName = lastNameController.text;
+                final email = emailController.text;
+                final password = _hashPassword(passwordController.text);
+      
+                // Call the register method
+                register(context, firstName, lastName, email, password);
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: const Color.fromARGB(255, 42, 143, 120),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              child: const SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: Center(child: Text("Sign Up")),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
