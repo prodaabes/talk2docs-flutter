@@ -63,8 +63,7 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
 
                           messages = [];
 
-                          chats!
-                              .add(Chat(id: id, title: 'New Chat', files: []));
+                          chats!.add(Chat(id, 'New Chat', []));
                           currentIndex = chats!.length - 1;
                         });
                       });
@@ -80,7 +79,10 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                         return Column(
                           children: [
                             ListTile(
-                              title: Text(chats![index].title),
+                              title: Text(
+                                chats![index].title,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                               onTap: () {
                                 setState(() {
                                   currentIndex = index;
@@ -174,6 +176,9 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                   color: Colors.white,
                   child: TextField(
                     controller: textController,
+                    onSubmitted: (value) {
+                      sendMessage();
+                    },
                     onChanged: (value) {
                       setState(() {
                         isFieldEmpty = value.isEmpty;

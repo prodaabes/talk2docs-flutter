@@ -1,7 +1,7 @@
 class Chat {
-  final String id;
-  final String title;
-  final List<String> files;
+  String id;
+  String title;
+  List<String> files;
 
-  const Chat({required this.id, required this.title, required this.files});
+  Chat(this.id, this.title, this.files);
 }

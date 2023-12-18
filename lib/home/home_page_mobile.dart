@@ -13,7 +13,6 @@ class HomePageMobile extends HomePage {
 }
 
 class _HomePageMobile extends HomePageState<HomePageMobile> {
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -24,7 +23,9 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                (chats != null && chats!.isNotEmpty) ? chats![currentIndex].title : 'Home',
+                (chats != null && chats!.isNotEmpty)
+                    ? chats![currentIndex].title
+                    : 'Home',
                 style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
               Visibility(
@@ -169,7 +170,8 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
                     padding: const EdgeInsets.only(left: 16),
                     child: Text(
                       'Delete the chat named \'${chats![i].title}\' ?',
-                      style: const TextStyle(fontSize: 14, color: Colors.black54),
+                      style:
+                          const TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                   ),
                   const Spacer(),
@@ -238,13 +240,12 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
 
                 newChat((id) {
                   setState(() {
-
                     // check if chats == null, then initialize it
                     chats ??= [];
 
                     messages = [];
 
-                    chats!.add(Chat(id: id, title: 'New Chat', files: []));
+                    chats!.add(Chat(id, 'New Chat', []));
                     currentIndex = chats!.length - 1;
                   });
                 });
@@ -259,7 +260,10 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
                       return Column(
                         children: [
                           ListTile(
-                            title: Text(chats![i].title),
+                            title: Text(
+                              chats![i].title,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             onTap: () {
                               // this line to close the drawer
                               Navigator.pop(context);

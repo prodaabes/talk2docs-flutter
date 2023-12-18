@@ -61,6 +61,13 @@ class HomePageState<T extends HomePage> extends State<T> {
             setState(() {
               this.messages = messages;
             });
+
+            Future.delayed(const Duration(milliseconds: 50), () {
+              setState(() {
+                scrollToBottom();
+              });
+            });
+
             listenForMessages();
           });
         });
@@ -74,6 +81,13 @@ class HomePageState<T extends HomePage> extends State<T> {
     );
     channel?.stream.listen((message) {
       setState(() {
+
+        String title = message;
+        if (title.length > 40) {
+          title = title.substring(0, 40);
+        }
+        chats![currentIndex].title = title;
+
         messages?.add(Message(
             id: const Uuid().v4(),
             chatId: chats![currentIndex].id,
@@ -131,7 +145,10 @@ void getMessages(String chatId, Function(List<Message> messages) callback) {
         return null;
       }
 
-      callback();
+      startChat(chats![currentIndex].id, () {
+        listenForMessages();
+        callback();
+      });
     });
   }
 
@@ -146,7 +163,10 @@ void getMessages(String chatId, Function(List<Message> messages) callback) {
         return null;
       }
 
-      callback();
+      startChat(chats![currentIndex].id, () {
+        listenForMessages();
+        callback();
+      });
     });
   }
 
