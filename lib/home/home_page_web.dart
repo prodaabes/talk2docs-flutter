@@ -74,7 +74,7 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                           messages = [];
 
                           chats!
-                              .add(Chat(id: id, title: 'New Chat', files: []));
+                              .add(Chat(id, 'New Chat', []));
                           currentIndex = chats!.length - 1;
                         });
                       });
@@ -92,6 +92,7 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                             ListTile(
                               title: Text(
                                 chats![index].title,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   color: Colors.white,
                                 ),
