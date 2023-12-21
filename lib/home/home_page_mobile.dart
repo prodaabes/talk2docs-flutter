@@ -81,34 +81,27 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
                             : IconButton(
                                 icon: const Icon(Icons.send),
                                 onPressed: () {
-                                  Message msg = Message(
-                                      id: const Uuid().v4(),
-                                      chatId: chats![currentIndex].id,
-                                      isQuestion: true,
-                                      content: textController.text);
+                                  if (currentIndex == -1) {
+                                    newChat((id) {
+                                      setState(() {
+                                        // check if chats == null, then initialize it
+                                        chats ??= [];
 
-                                  channel?.sink.add(msg.content);
+                                        messages = [];
 
-                                  setState(() {
-                                    messages!.add(msg);
-                                  });
+                                        chats!.add(Chat(id, 'New Chat', []));
+                                        currentIndex = chats!.length - 1;
 
-                                  Future.delayed(
-                                      const Duration(milliseconds: 50), () {
-                                    setState(() {
-                                      scrollToBottom();
+                                        startChat(chats![currentIndex].id, () {
+                                          listenForMessages();
+                                        });
+
+                                        sendMessage();
+                                      });
                                     });
-                                  });
-
-                                  Future.delayed(const Duration(seconds: 1),
-                                      () {
-                                    setState(() {
-                                      isTyping = true;
-                                    });
-                                  });
-
-                                  textController.text = "";
-                                  resetSendBtn(textController.text);
+                                  } else {
+                                    sendMessage();
+                                  }
                                 },
                               ),
                       ),
@@ -118,6 +111,37 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
               ),
       ),
     );
+  }
+
+  void sendMessage() {
+    Message msg = Message(
+        id: const Uuid().v4(),
+        chatId: chats![currentIndex].id,
+        isQuestion: true,
+        content: textController.text);
+
+    channel?.sink.add(msg.content);
+
+    setState(() {
+      messages!.add(msg);
+    });
+
+    Future.delayed(
+        const Duration(milliseconds: 50), () {
+      setState(() {
+        scrollToBottom();
+      });
+    });
+
+    Future.delayed(const Duration(seconds: 1),
+            () {
+          setState(() {
+            isTyping = true;
+          });
+        });
+
+    textController.text = "";
+    resetSendBtn(textController.text);
   }
 
   // this method used to show/hide the send button
@@ -199,6 +223,8 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
                                 // check if chats not empty, select the first chat after delete
                                 if (chats!.isNotEmpty) {
                                   currentIndex = 0;
+                                } else {
+                                  currentIndex = -1;
                                 }
                               });
                             });
