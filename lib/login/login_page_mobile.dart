@@ -153,33 +153,20 @@ class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
                     ),
                     child: const Text('Sign In'),
                   ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SignInButton(
+                        button: Button.Google,
+                        small: false,
+                        onPressed: handleGoogleSignIn,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-            //const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SignInButton(
-                  button: Button.Google,
-                  small: true,
-                  onPressed: () {},
-                ),
-                const SizedBox(width: 30),
-                SignInButton(
-                  button: Button.GitHub,
-                  small: true,
-                  onPressed: () {},
-                ),
-                const SizedBox(width: 30),
-                SignInButton(
-                  button: Button.Facebook,
-                  small: true,
-                  onPressed: () {},
-                ),
-              ],
-            ),
-            const SizedBox(height: 20)
           ],
         ),
       ),

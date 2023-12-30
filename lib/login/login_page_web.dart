@@ -16,10 +16,8 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
     with TickerProviderStateMixin {
   late AnimationController _controller1;
   late AnimationController _controller2;
-  late AnimationController _controller3;
   late Animation<Offset> _slideAnimation1;
   late Animation<Offset> _slideAnimation2;
-  late Animation<Offset> _slideAnimation3;
 
   // Controllers used to control the text fields (get the text)
   final TextEditingController emailController = TextEditingController();
@@ -40,10 +38,6 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
       duration: const Duration(seconds: 1),
       vsync: this,
     );
-    _controller3 = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: this,
-    );
 
     _slideAnimation1 = Tween<Offset>(
       begin: const Offset(-2.0, 0.0),
@@ -55,15 +49,8 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller2, curve: Curves.easeOut));
 
-    _slideAnimation3 = Tween<Offset>(
-      begin: const Offset(-2.0, 0.0),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller3, curve: Curves.easeOut));
-
     _controller1.forward().then((_) {
-      _controller2.forward().then((_) {
-        _controller3.forward();
-      });
+      _controller2.forward();
     });
   }
 
@@ -124,7 +111,7 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
                     ),
                     WidgetSpan(
                       child: SlideTransition(
-                        position: _slideAnimation3,
+                        position: _slideAnimation2,
                         child: const Text(
                           'Talk2Docs',
                           style: TextStyle(
@@ -193,17 +180,20 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
   }
 
   Widget _registerButton() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white70,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: const Text(
-        'Register',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF000026),
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white70,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: const Text(
+          'Register',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF000026),
+          ),
         ),
       ),
     );
@@ -322,26 +312,17 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
           ),
         ]),
         const SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.only(left: 115),
-          child:  Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _loginWithGoogleButton(
-              isActive: true,
-            ),
-          ],
+        _loginWithGoogleButton(
+          isActive: true,
         ),
-          )
-       
       ],
     );
   }
 
   Widget _loginWithGoogleButton({bool isActive = false}) {
     return Container(
-      width: 90,
-      height: 70,
+      width: double.infinity,
+      height: 50,
       decoration: isActive
           ? BoxDecoration(
               color: Colors.white,
@@ -361,7 +342,7 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
       child: Center(
         child: Container(
           child: ElevatedButton(
-            onPressed: _handleGoogleSignIn,
+            onPressed: handleGoogleSignIn,
             style: ElevatedButton.styleFrom(
               primary: Colors.white,
               onPrimary: Colors.black,
@@ -381,40 +362,11 @@ class _LoginPageWebState extends LoginPageState<LoginPageWeb>
                   ),
                 ),
                 const SizedBox(width: 10),
-                
               ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  void _handleGoogleSignIn() async {
-    try {
-      // Initialize GoogleSignIn
-      final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
-
-      // Sign in with Google
-      final GoogleSignInAccount? googleSignInAccount =
-          await _googleSignIn.signIn();
-
-      // Handle the sign-in result
-      if (googleSignInAccount != null) {
-        // You can get user details like name and email
-        String displayName = googleSignInAccount.displayName ?? "";
-        String email = googleSignInAccount.email ?? "";
-
-        final GoogleSignInAuthentication googleSignInAuthentication =
-            await googleSignInAccount.authentication;
-
-        String accessToken = googleSignInAuthentication.accessToken ?? "";
-        String idToken = googleSignInAuthentication.idToken ?? "";
-        
-        loginGoogle(context, email, accessToken,displayName);
-      }
-    } catch (error) {
-      print('Error during Google sign-in: $error');
-    }
   }
 }

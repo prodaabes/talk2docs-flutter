@@ -154,30 +154,6 @@ class _SignupPageMobile extends SignupPageState<SignupPageMobile> {
                 ],
               ),
             ),
-            //const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SignInButton(
-                  button: Button.Google,
-                  small: true,
-                  onPressed: () {},
-                ),
-                const SizedBox(width: 30),
-                SignInButton(
-                  button: Button.GitHub,
-                  small: true,
-                  onPressed: () {},
-                ),
-                const SizedBox(width: 30),
-                SignInButton(
-                  button: Button.Facebook,
-                  small: true,
-                  onPressed: () {},
-                ),
-              ],
-            ),
-            const SizedBox(height: 20)
           ],
         ),
       ),

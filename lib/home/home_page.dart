@@ -197,14 +197,27 @@ class HomePageState<T extends HomePage> extends State<T> {
     });
   }
 
-  void deleteChat(String chatId, Function() callback) {
+  void deleteChat(String chatId, int index) {
     API().deleteChat(chatId, (isSuccess) {
       if (!isSuccess) {
         Utils().showSnackBar(mContext, 'Error deleting chat');
         return null;
       }
 
-      callback();
+      setState(() {
+        // empty the messages array
+        messages?.clear();
+
+        // remove the chat from chats list
+        chats?.removeAt(index);
+
+        // check if chats not empty, select the first chat after delete
+        if (chats!.isNotEmpty) {
+          currentIndex = 0;
+        } else {
+          currentIndex = -1;
+        }
+      });
     });
   }
 
@@ -254,30 +267,7 @@ class HomePageState<T extends HomePage> extends State<T> {
                         )
                       ],
                     ),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: chats![currentIndex].files.length,
-                        itemBuilder: (BuildContext context, int i) {
-                          String file = chats![currentIndex].files[i];
-
-                          return ListTile(
-                            leading: file.toLowerCase().endsWith('.pdf')
-                                ? Image.asset('assets/images/pdf.png',
-                                    width: 30, height: 30)
-                                : Image.asset('assets/images/picture.png',
-                                    width: 30, height: 25),
-                            title: Text(file),
-                            trailing: IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  removeFile(chats![currentIndex].id, file, () {
-                                    setDialogState(() {
-                                      chats![currentIndex].files.removeAt(i);
-                                    });
-                                  });
-                                }),
-                          );
-                        }),
+                    filesListView(setDialogState),
                     const Spacer(),
                     Row(
                       children: [
@@ -285,19 +275,21 @@ class HomePageState<T extends HomePage> extends State<T> {
                         Padding(
                           padding: const EdgeInsets.only(right: 16),
                           child: Opacity(
-                            opacity: chats![currentIndex].files.length >= 4
-                                ? 0.5
-                                : 1,
+                            opacity: (chats!.isEmpty ||
+                                    chats![currentIndex].files.length < 4)
+                                ? 1
+                                : 0.5,
                             child: TextButton(
-                              onPressed: chats![currentIndex].files.length >= 4
-                                  ? null
-                                  : () async {
+                              onPressed: (chats!.isEmpty ||
+                                      chats![currentIndex].files.length < 4)
+                                  ? () async {
                                       if (kIsWeb) {
                                         uploadFileWeb(setDialogState);
                                       } else {
                                         uploadFileMobile(setDialogState);
                                       }
-                                    },
+                                    }
+                                  : null,
                               child: const Text('Upload File'),
                             ),
                           ),
@@ -310,6 +302,36 @@ class HomePageState<T extends HomePage> extends State<T> {
             );
           });
         });
+  }
+
+  Widget filesListView(setDialogState) {
+    if (chats!.isNotEmpty && currentIndex != -1) {
+      return ListView.builder(
+          shrinkWrap: true,
+          itemCount: chats![currentIndex].files.length,
+          itemBuilder: (BuildContext context, int i) {
+            String file = chats![currentIndex].files[i];
+
+            return ListTile(
+              leading: file.toLowerCase().endsWith('.pdf')
+                  ? Image.asset('assets/images/pdf.png', width: 30, height: 30)
+                  : Image.asset('assets/images/picture.png',
+                      width: 30, height: 25),
+              title: Text(file),
+              trailing: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    removeFile(chats![currentIndex].id, file, () {
+                      setDialogState(() {
+                        chats![currentIndex].files.removeAt(i);
+                      });
+                    });
+                  }),
+            );
+          });
+    } else {
+      return const Spacer();
+    }
   }
 
   void uploadFileMobile(setDialogState) async {

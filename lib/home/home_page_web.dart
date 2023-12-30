@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:talk2docs/home/home_page.dart';
 import 'package:talk2docs/models/message.dart';
@@ -17,6 +18,9 @@ class HomePageWeb extends HomePage {
 class _HomePageWebState extends HomePageState<HomePageWeb> {
   late SharedPreferences prefs;
   late String fullName = "";
+
+  int _hoverIndex = -1;
+  bool _isDeleteHovered = false;
 
   @override
   void initState() {
@@ -73,8 +77,7 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
 
                           messages = [];
 
-                          chats!
-                              .add(Chat(id, 'New Chat', []));
+                          chats!.add(Chat(id, 'New Chat', []));
                           currentIndex = chats!.length - 1;
                         });
                       });
@@ -89,29 +92,49 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                       itemBuilder: (BuildContext context, int index) {
                         return Column(
                           children: [
-                            ListTile(
-                              title: Text(
-                                chats![index].title,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                            MouseRegion(
+                              onEnter: (PointerEnterEvent event) =>
+                                  _onListTileHoverChanged(index: index, isReleased: false),
+                              onExit: (PointerExitEvent event) =>
+                                  _onListTileHoverChanged(index: index, isReleased: true),
+                              child: ListTile(
+                                mouseCursor: SystemMouseCursors.basic,
+                                title: Text(
+                                  chats![index].title,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  currentIndex = index;
-                                  messages = null;
-                                });
-                                getMessages(chats![currentIndex].id,
-                                    (messages) {
-                                  startChat(chats![currentIndex].id, () {
-                                    setState(() {
-                                      this.messages = messages;
-                                    });
-                                    listenForMessages();
+                                trailing: _hoverIndex != index ? null : MouseRegion(
+                                  cursor: SystemMouseCursors.copy,
+                                  onEnter: (PointerEnterEvent event) =>
+                                      _onDeleteHoverChanged(isDeleteHovered: true),
+                                  onExit: (PointerExitEvent event) =>
+                                      _onDeleteHoverChanged(isDeleteHovered: false),
+                                  child: IconButton(
+                                    onPressed: () {
+                                      deleteChat(chats![currentIndex].id, index);
+                                    },
+                                    icon: Icon(Icons.delete, color: _isDeleteHovered ? Colors.white : null),
+                                  ),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    currentIndex = index;
+                                    messages = null;
                                   });
-                                });
-                              },
+                                  getMessages(chats![currentIndex].id,
+                                      (messages) {
+                                    startChat(chats![currentIndex].id, () {
+                                      setState(() {
+                                        this.messages = messages;
+                                      });
+                                      listenForMessages();
+                                    });
+                                  });
+                                },
+                              ),
                             ),
                             const Divider(height: 0),
                           ],
@@ -215,7 +238,26 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                           : IconButton(
                               icon: const Icon(Icons.send),
                               onPressed: () {
-                                sendMessage();
+                                if (currentIndex == -1) {
+                                  newChat((id) {
+                                    setState(() {
+                                      // check if chats == null, then initialize it
+                                      chats ??= [];
+
+                                      messages = [];
+
+                                      chats!.add(Chat(id, 'New Chat', []));
+                                      currentIndex = chats!.length - 1;
+
+                                      startChat(chats![currentIndex].id, () {
+                                        listenForMessages();
+                                        sendMessage();
+                                      });
+                                    });
+                                  });
+                                } else {
+                                  sendMessage();
+                                }
                               },
                             ),
                     ),
@@ -227,6 +269,18 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
         ],
       ),
     );
+  }
+
+  void _onListTileHoverChanged({required int index, required bool isReleased}) {
+    setState(() {
+      _hoverIndex = isReleased ? -1 : index;
+    });
+  }
+
+  void _onDeleteHoverChanged({required bool isDeleteHovered}) {
+    setState(() {
+      _isDeleteHovered = isDeleteHovered;
+    });
   }
 
   void sendMessage() {

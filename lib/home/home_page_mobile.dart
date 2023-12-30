@@ -94,9 +94,8 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
 
                                         startChat(chats![currentIndex].id, () {
                                           listenForMessages();
+                                          sendMessage();
                                         });
-
-                                        sendMessage();
                                       });
                                     });
                                   } else {
@@ -212,22 +211,7 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
                             // this line to close the drawer
                             Navigator.pop(context);
 
-                            deleteChat(chats![currentIndex].id, () {
-                              setState(() {
-                                // empty the messages array
-                                messages?.clear();
-
-                                // remove the chat from chats list
-                                chats?.removeAt(i);
-
-                                // check if chats not empty, select the first chat after delete
-                                if (chats!.isNotEmpty) {
-                                  currentIndex = 0;
-                                } else {
-                                  currentIndex = -1;
-                                }
-                              });
-                            });
+                            deleteChat(chats![currentIndex].id, i);
                           },
                           child: const Text('Yes'),
                         ),
