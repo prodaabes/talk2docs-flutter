@@ -194,6 +194,16 @@ class _HomePageWebState extends HomePageState<HomePageWeb> {
                           'Talk2Docs',
                           style: TextStyle(fontSize: 24),
                         ),
+                        SizedBox(
+                          height: 20,
+                          child: Visibility(
+                            visible: isTyping,
+                            child: const Text(
+                              'typing...',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ),
+                        ),
                         Flexible(
                           child: ListView.builder(
                             controller: scrollController,

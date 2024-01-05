@@ -125,19 +125,17 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
       messages!.add(msg);
     });
 
-    Future.delayed(
-        const Duration(milliseconds: 50), () {
+    Future.delayed(const Duration(milliseconds: 50), () {
       setState(() {
         scrollToBottom();
       });
     });
 
-    Future.delayed(const Duration(seconds: 1),
-            () {
-          setState(() {
-            isTyping = true;
-          });
-        });
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        isTyping = true;
+      });
+    });
 
     textController.text = "";
     resetSendBtn(textController.text);
