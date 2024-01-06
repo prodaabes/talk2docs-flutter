@@ -57,7 +57,7 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
                         }),
                   ),
                   Container(
-                    height: 50,
+                    height: 70,
                     margin: const EdgeInsets.all(10.0),
                     color: Colors.white,
                     child: TextField(

@@ -241,6 +241,7 @@ class HomePageState<T extends HomePage> extends State<T> {
               elevation: 0,
               backgroundColor: Colors.transparent,
               child: Container(
+                width: kIsWeb ? 400 : double.infinity,
                 height: 350,
                 decoration: const BoxDecoration(
                     color: Colors.white,

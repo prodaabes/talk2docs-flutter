@@ -6,8 +6,8 @@ import 'package:talk2docs/models/message.dart';
 import 'package:talk2docs/models/upload_file_model.dart';
 
 class API {
-  static const String SERVER_URL = "http://192.168.0.143";
-  static const String SOCKET_URL = "ws://192.168.0.143:8765";
+  static const String SERVER_URL = "http://192.168.152.248";
+  static const String SOCKET_URL = "ws://192.168.152.248:8765";
 
   Future<void> login(
       String email, String password, Function(bool isSuccess) callback) async {

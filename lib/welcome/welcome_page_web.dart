@@ -21,7 +21,7 @@ class _WelcomePageWeb extends WelcomePageState<WelcomePageWeb> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF000026),
-        title: const Text('Talk2Docs'),
+        title: const Text('Talk2Docs', style: TextStyle(color: Colors.white)),
         actions: [
           TextButton(
             onPressed: () {
@@ -57,7 +57,7 @@ class _WelcomePageWeb extends WelcomePageState<WelcomePageWeb> {
           Positioned(
             right: 0,
             child: Container(
-              width: 620,
+              width: 450,
               padding:
                   const EdgeInsets.symmetric(horizontal: 50.0, vertical: 200.0),
               child: const Column(
@@ -69,7 +69,7 @@ class _WelcomePageWeb extends WelcomePageState<WelcomePageWeb> {
                     child: Text(
                       'Welcome to Talk2Docs',
                       style: TextStyle(
-                        fontSize: 43.0,
+                        fontSize: 38.0,
                         fontWeight: FontWeight.w900,
                         fontFamily: 'Trajan Pro',
                         color: Color(0xFF000026),
@@ -79,7 +79,7 @@ class _WelcomePageWeb extends WelcomePageState<WelcomePageWeb> {
                   Text(
                     'Unlock insights from your PDFs!\nSimply upload, and let the magic of information retrieval begin.',
                     style: TextStyle(
-                      fontSize: 27.0,
+                      fontSize: 22.0,
                       color: Color.fromARGB(255, 40, 38, 38),
                     ),
                   ),
