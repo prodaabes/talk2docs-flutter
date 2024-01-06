@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:talk2docs/api.dart';
 import 'package:talk2docs/home/home_page.dart';
 import 'package:talk2docs/login/login_page_mobile.dart';
@@ -41,6 +42,34 @@ class LoginPageState<T extends LoginPage> extends State<T> {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HomePage()));
 
     });
+  }
+
+  void handleGoogleSignIn() async {
+    try {
+      // Initialize GoogleSignIn
+      final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+
+      // Sign in with Google
+      final GoogleSignInAccount? googleSignInAccount =
+      await _googleSignIn.signIn();
+
+      // Handle the sign-in result
+      if (googleSignInAccount != null) {
+        // You can get user details like name and email
+        String displayName = googleSignInAccount.displayName ?? "";
+        String email = googleSignInAccount.email ?? "";
+
+        final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount.authentication;
+
+        String accessToken = googleSignInAuthentication.accessToken ?? "";
+        String idToken = googleSignInAuthentication.idToken ?? "";
+
+        loginGoogle(context, email, accessToken,displayName);
+      }
+    } catch (error) {
+      print('Error during Google sign-in: $error');
+    }
   }
 
   void loginGoogle(BuildContext context, String googleEmail, String googleToken,String displayName) {

@@ -70,10 +70,12 @@ class API {
 
       final data = jsonDecode(res.body);
       final token = data['token'];
+      final id = data['id'];
 
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-
+      await prefs.setString('fullName', "$firstName $lastName");
       await prefs.setString('serverToken', token);
+      await prefs.setString('id', id);
 
       callback(true);
     } catch (e) {

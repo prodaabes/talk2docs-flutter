@@ -151,9 +151,24 @@ class _SignupPageWebState extends SignupPageState<SignupPageWeb>
               color: Colors.white,
             ),
           ),
-          GestureDetector(
-            onTap: onPressSignIn,
-            child: _signinButton(),
+          Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  'Register',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: onPressSignIn,
+                child: _signinButton(),
+              ),
+            ],
           ),
         ],
       ),
@@ -161,17 +176,20 @@ class _SignupPageWebState extends SignupPageState<SignupPageWeb>
   }
 
   Widget _signinButton() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white70,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: const Text(
-        'Sign in ',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF000026),
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white70,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: const Text(
+          'Sign in ',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF000026),
+          ),
         ),
       ),
     );
