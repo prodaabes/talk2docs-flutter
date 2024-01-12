@@ -243,7 +243,6 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
               trailing:
                   Image.asset('assets/images/pen.png', width: 20, height: 20),
               onTap: () {
-                // this line to close the drawer
                 Navigator.pop(context);
 
                 newChat((id) {
@@ -306,7 +305,6 @@ class _HomePageMobile extends HomePageState<HomePageMobile> {
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Logout', style: TextStyle(color: Colors.red)),
             onTap: () {
-              // close the drawer and logout
               Navigator.pop(context);
               logout();
             },

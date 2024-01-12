@@ -142,7 +142,6 @@ class _SignupPageMobile extends SignupPageState<SignupPageMobile> {
                       String email = emailController.text;
                       String password = passwordController.text;
 
-                      // Call the register function
                       register(context, firstName, lastName, email, password);
                     },
                     style: FilledButton.styleFrom(

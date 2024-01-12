@@ -14,7 +14,7 @@ class LoginPageMobile extends LoginPage {
 class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
   var _isTitleVisible = false;
 
-  // these controllers used to control the text fields (like get the text)
+  // these controllers used to control the text fields
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -60,8 +60,6 @@ class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
                       height: 100,
                       child: Center(
                         child: AnimatedOpacity(
-                          // If the widget is visible, animate to 0.0 (invisible).
-                          // If the widget is hidden, animate to 1.0 (fully visible).
                           opacity: _isTitleVisible ? 1.0 : 0.0,
                           duration: const Duration(milliseconds: 1000),
                           child: const Text(
@@ -115,7 +113,7 @@ class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
                       const Spacer(),
                       Padding(
                         padding: const EdgeInsets.only(
-                            right: 20.0), // Add right padding for spacing
+                            right: 20.0), 
                         child: TextButton(
                           onPressed: () {},
                           style: ButtonStyle(
@@ -144,7 +142,6 @@ class _LoginPageMobile extends LoginPageState<LoginPageMobile> {
                       final passwordInBytes = utf8.encode(password);
                       final sha256password = sha256.convert(passwordInBytes);
 
-                      // try to login
                       login(context, email, sha256password.toString());
                     },
                     style: FilledButton.styleFrom(

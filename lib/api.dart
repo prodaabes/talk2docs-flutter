@@ -6,8 +6,8 @@ import 'package:talk2docs/models/message.dart';
 import 'package:talk2docs/models/upload_file_model.dart';
 
 class API {
-  static const String SERVER_URL = "http://192.168.152.248";
-  static const String SOCKET_URL = "ws://192.168.152.248:8765";
+  static const String SERVER_URL = "http://192.168.0.143";
+  static const String SOCKET_URL = "ws://192.168.0.143:8765";
 
   Future<void> login(
       String email, String password, Function(bool isSuccess) callback) async {
@@ -84,7 +84,6 @@ class API {
     }
   }
 
-  // this method used to get the logged in user chats
   Future<void> getChats(
       Function(bool isSuccess, List<Chat> chats) callback) async {
     try {
@@ -238,9 +237,6 @@ class API {
         return;
       }
 
-      // final data = jsonDecode(res.body);
-      // final port = data['port'];
-
       callback(true);
     } catch (e) {
       print("Exception during API request: $e");
@@ -249,9 +245,7 @@ class API {
   }
 
   Future<void> newChat(Function(bool isSuccess, String id) callback) async {
-    //try {
 
-    // get the saved user id
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final id = prefs.getString("id") ?? "";
 
@@ -273,10 +267,7 @@ class API {
     final chatId = data['id'];
 
     callback(true, chatId);
-    // } catch (e) {
-    //   print("Exception during API request: $e");
-    //   callback(false, "");
-    // }
+
   }
 
   Future<void> deleteChat(
@@ -295,9 +286,6 @@ class API {
         callback(false);
         return;
       }
-
-      // final data = jsonDecode(res.body);
-      // final port = data['port'];
 
       callback(true);
     } catch (e) {

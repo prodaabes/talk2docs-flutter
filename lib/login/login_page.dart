@@ -53,9 +53,7 @@ class LoginPageState<T extends LoginPage> extends State<T> {
       final GoogleSignInAccount? googleSignInAccount =
       await _googleSignIn.signIn();
 
-      // Handle the sign-in result
       if (googleSignInAccount != null) {
-        // You can get user details like name and email
         String displayName = googleSignInAccount.displayName ?? "";
         String email = googleSignInAccount.email ?? "";
 

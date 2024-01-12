@@ -357,19 +357,12 @@ class HomePageState<T extends HomePage> extends State<T> {
   }
 
   void uploadFileWeb(setDialogState) async {
-    // Use a suitable method to open a file picker dialog for web
-    // For example, you can use the FilePicker package for Flutter
-
     FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['jpg', 'png', 'pdf'],
         allowMultiple: false);
 
     if (result != null) {
-      // Process the selected file
-      // For example, convert it to an UploadFile object
-      // Then, call your uploadFiles method to handle the upload
-
       UploadFile uFile = UploadFile(
           name: result.files.single.name, bytes: result.files.single.bytes!);
 
@@ -378,9 +371,7 @@ class HomePageState<T extends HomePage> extends State<T> {
           chats![currentIndex].files.add(result.files.single.name);
         });
       });
-    } else {
-      // User canceled the picker
-    }
+    } else {}
   }
 
   void scrollToBottom() {
